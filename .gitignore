@@ -1,0 +1,4 @@
+build/tsukios.bin
+build/tsukios.iso
+obj/*.o
+iso/boot/tsukios.bin
