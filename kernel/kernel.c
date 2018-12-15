@@ -3,5 +3,5 @@
 void kernel_main(void)
 {
 	terminal_init();
-	terminal_writestring("TsukiOS\nline 2");
+	terminal_writestring("TsukiOS\n");
 }
