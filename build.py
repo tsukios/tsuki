@@ -1,10 +1,10 @@
 import os, glob, sys
 from pathlib import Path
 
-def run(command):
+def run(command, can_fail=False):
 	print(command)
 	code = os.system(command)
-	if code != 0:
+	if code != 0 and not can_fail:
 		print()
 		print()
 		print(f" !!! COMMAND EXITED WITH CODE {code}, ABORTING !!! ")
@@ -20,7 +20,7 @@ assembler_flags = "-felf32"
 compiler = "clang"
 compiler_flags = "--target=i686-elf -march=i686"
 
-compile_flags = "-std=gnu99 -ffreestanding -O2 -Wall -Wextra -nostdlib -fno-builtin"
+compile_flags = "-std=c99 -ffreestanding -O2 -Wall -Wextra -nostdlib -fno-builtin"
 link_flags = f"-T {linker_script} -ffreestanding -O2 -nostdlib -lgcc"
 
 obj_dir = "obj/"
@@ -38,6 +38,8 @@ build_dir = "build/"
 
 bin_file = f"{build_dir}tsukios.bin"
 iso_file = f"{build_dir}tsukios.iso"
+
+qemu_flags = ""
 
 def assemble():
 	for file in asm_files:
@@ -66,12 +68,12 @@ def all():
 	make_iso()
 
 def clean():
-	run(f"rm {bin_file}")
-	run(f"rm {iso_file}")
-	run(f"rm {' '.join(list(obj_files))}")
+	run(f"rm {bin_file}", can_fail=True)
+	run(f"rm {iso_file}", can_fail=True)
+	run(f"rm {' '.join(list(obj_files))}", can_fail=True)
 
 def qemu():
-	run(f"qemu-system-i386 -cdrom {iso_file}")
+	run(f"qemu-system-i386 -cdrom {iso_file} {qemu_flags}")
 
 if __name__ == "__main__":
 	print()
@@ -83,7 +85,7 @@ if __name__ == "__main__":
 		print(f" Usage: {sys.argv[0]} <target>")
 		print()
 		print(" Available Targets:")
-		print("   assemble, kernel, link, iso, all, clean, qemu")
+		print("   assemble, kernel, link, iso, all, clean, qemu, qemu-all")
 		print()
 		sys.exit(1)
 
@@ -104,6 +106,8 @@ if __name__ == "__main__":
 	elif target == "clean":
 		clean()
 	elif target == "qemu":
+		qemu()
+	elif target == "qemu-all":
 		all()
 		qemu()
 	else:
