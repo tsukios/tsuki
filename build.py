@@ -43,7 +43,7 @@ qemu_flags = ""
 
 def assemble():
 	for file in asm_files:
-		run(f"{assembler} {assembler_flags} {file} -o {obj_dir}{Path(file).stem + '.o'}")
+		run(f"{assembler} {assembler_flags} {file} -o {obj_dir}{Path(file).stem + '_asm.o'}")
 
 def compile_libc():
 	for file in libc_files:
