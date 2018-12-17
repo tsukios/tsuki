@@ -39,7 +39,7 @@ build_dir = "build/"
 bin_file = f"{build_dir}tsukios.bin"
 iso_file = f"{build_dir}tsukios.iso"
 
-qemu_flags = ""
+qemu_flags = "-s"
 
 def assemble():
 	for file in asm_files:
@@ -85,7 +85,7 @@ if __name__ == "__main__":
 		print(f" Usage: {sys.argv[0]} <target>")
 		print()
 		print(" Available Targets:")
-		print("   assemble, kernel, link, iso, all, clean, qemu, qemu-all")
+		print("   assemble, libc, kernel, link, iso, all, clean, qemu, qemu-all")
 		print()
 		sys.exit(1)
 
