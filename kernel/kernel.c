@@ -1,8 +1,10 @@
 #include "terminal.h"
 #include "serial.h"
+#include "gdt.h"
 
 void kernel_main(void)
 {
+	gdt_init();
 	terminal_init();
 	serial_init(0);
 
