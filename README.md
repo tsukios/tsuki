@@ -2,7 +2,7 @@
 
 Hobby operating system.
 
-Try with `python build.py qemu-all`.
+Try with `python build.py all qemu`.
 
 ## Dependencies
 
