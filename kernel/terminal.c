@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "terminal.h"
+#include "log.h"
 
 size_t terminal_row;
 size_t terminal_column;
@@ -21,11 +22,18 @@ void terminal_init(void)
 			terminal_buffer[index] = vga_entry(' ', terminal_color);
 		}
 	}
+
+	log(LOG_INFO, "Terminal module activated\n");
 }
  
 void terminal_setcolor(uint8_t color) 
 {
 	terminal_color = color;
+}
+
+uint8_t terminal_getcolor(void)
+{
+	return terminal_color;
 }
  
 void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) 

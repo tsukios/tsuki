@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "gdt.h"
 #include "panic.h"
+#include "log.h"
 
 void gdt_init(void)
 {
@@ -13,6 +14,8 @@ void gdt_init(void)
 	gdt_pointer.size = sizeof(gdt) - 1;
 
 	gdt_flush((size_t) &gdt_pointer);
+
+	log(LOG_INFO, "GDT module initialized\n");
 }
 
 void gdt_encode_entry(uint8_t* target, uint32_t base, uint32_t limit, uint8_t type)

@@ -3,19 +3,19 @@
 #include "gdt.h"
 #include "idt.h"
 #include "8259.h"
+#include "log.h"
 
 void kernel_main(void)
 {
-	terminal_init();
 	serial_init(0);
+	terminal_init();
 	gdt_init();
 	idt_init();
 	pic_init();
 
 	__asm__ ( "sti" );
 
-	terminal_writestring("TsukiOS\n");
-	serial_writestring(0, "TsukiOS\nSerial port test\n");
+	log(LOG_INFO, "Kernel initialized");
 
 	__asm__ (
 		"movl $1, %eax\n\t"

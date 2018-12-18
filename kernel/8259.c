@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "8259.h"
 #include "io.h"
+#include "log.h"
 
 #define MASTER_COMMAND  0x20
 #define MASTER_DATA     0x21
@@ -11,6 +12,8 @@ void pic_init(void)
 {
 	pic_remap(0x20, 0x70);
 	pic_clear_masks();
+
+	log(LOG_INFO, "8259 PIC module initialized\n");
 }
 
 void pic_send_eoi(uint8_t irq)

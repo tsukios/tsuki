@@ -1,6 +1,7 @@
 #include <string.h>
 #include "io.h"
 #include "serial.h"
+#include "log.h"
 
 void serial_init(int port_idx)
 {
@@ -12,6 +13,8 @@ void serial_init(int port_idx)
 	io_outb(port + 3, 0x03); // Disable DLAB, set parity
 	io_outb(port + 2, 0xC7); // Enable FIFO and clear
 	io_outb(port + 4, 0x0B); // Enable IRQ, RTS/DSR set
+
+	log(LOG_INFO, "Serial module initialized\n");
 }
 
 int serial_received(int port_idx)

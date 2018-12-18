@@ -3,6 +3,7 @@
 #include "idt.h"
 #include "isr.h"
 #include "exception.h"
+#include "log.h"
 
 #define INTERRUPT_GATE  0b00001110
 #define TRAP_GATE       0b00001111
@@ -47,6 +48,8 @@ void idt_init(void)
 	idt_flush((size_t) &idt_pointer);
 
 	__asm__ ( "int $0x80" );
+
+	log(LOG_INFO, "IDT module initialized\n");
 }
 
 void idt_encode_entry(uint8_t* target, uint32_t address, uint8_t type_attr)
