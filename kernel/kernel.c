@@ -21,6 +21,4 @@ void kernel_main(void)
 		"movl $1, %eax\n\t"
 		"movl $0, %ecx\n\t"
 		"div %ecx" );
-
-	while (1);
 }

@@ -36,9 +36,11 @@ void panic(const char* message)
 		__asm__ ( "hlt" );
 }
 
-void panic_exception(const char* name, int vec, struct isr_interrupt_frame* frame)
+void panic_exception(int vec, struct isr_interrupt_frame* frame)
 {
 	__asm__ ( "cli" );
+
+	const char* name = EXCEPTION_NAMES[vec];
 
 	terminal_setcolor(vga_entry_color(VGA_COLOR_LIGHT_GRAY, VGA_COLOR_RED));
 	terminal_writestring("     KERNEL PANIC     \n");
