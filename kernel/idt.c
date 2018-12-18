@@ -31,7 +31,7 @@ void idt_init(void)
 
 	idt_flush((size_t) &idt_pointer);
 
-	idt_test();
+	__asm__ ( "int $0x80" );
 }
 
 void idt_encode_entry(uint8_t* target, uint32_t address, uint8_t type_attr)
