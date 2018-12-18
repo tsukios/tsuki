@@ -12,9 +12,15 @@ void kernel_main(void)
 	idt_init();
 	pic_init();
 
+	__asm__ ( "sti" );
+
 	terminal_writestring("TsukiOS\n");
 	serial_writestring(0, "TsukiOS\nSerial port test\n");
 
-	__asm__ ( "sti" );
+	__asm__ (
+		"movl $1, %eax\n\t"
+		"movl $0, %ecx\n\t"
+		"div %ecx" );
+
 	while (1);
 }

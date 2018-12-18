@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-struct interrupt_frame {
+struct isr_interrupt_frame {
 	uint16_t ip;
 	uint16_t cs;
 	uint16_t flags;
@@ -11,7 +11,7 @@ struct interrupt_frame {
 	uint16_t ss;
 };
 
-__attribute__((interrupt)) void isr_hardware_handle(struct interrupt_frame* frame);
-__attribute__((interrupt)) void isr_software_handle(struct interrupt_frame* frame);
+__attribute__((interrupt)) void isr_hardware_handle(struct isr_interrupt_frame* frame);
+__attribute__((interrupt)) void isr_software_handle(struct isr_interrupt_frame* frame);
 
 #endif

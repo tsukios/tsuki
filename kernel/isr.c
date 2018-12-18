@@ -2,13 +2,13 @@
 #include "terminal.h"
 
 __attribute__((interrupt))
-void isr_hardware_handle(struct interrupt_frame* frame)
+void isr_hardware_handle(struct isr_interrupt_frame* frame)
 {
-	terminal_writestring("[Hardware Interrupt]");
+	terminal_writestring("[H]");
 }
 
 __attribute__((interrupt))
-void isr_software_handle(struct interrupt_frame* frame)
+void isr_software_handle(struct isr_interrupt_frame* frame)
 {
-	terminal_writestring("[Software Interrupt]");
+	terminal_writestring("[S]");
 }
