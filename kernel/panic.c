@@ -4,6 +4,20 @@
 #include "serial.h"
 #include "terminal.h"
 
+void panic(const char* message)
+{
+	__asm__ ( "cli" );
+
+	terminal_setcolor(vga_entry_color(VGA_COLOR_LIGHT_GRAY, VGA_COLOR_RED));
+	terminal_writestring("     KERNEL PANIC     \n");
+	terminal_setcolor(vga_entry_color(VGA_COLOR_LIGHT_GRAY, VGA_COLOR_BLACK));
+
+	terminal_writestring(message);
+
+	while (1)
+		__asm__ ( "hlt" );
+}
+
 void panic_exception(const char* name, int vec, struct isr_interrupt_frame* frame)
 {
 	__asm__ ( "cli" );

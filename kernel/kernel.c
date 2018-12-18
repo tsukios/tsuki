@@ -6,9 +6,9 @@
 
 void kernel_main(void)
 {
-	gdt_init();
 	terminal_init();
 	serial_init(0);
+	gdt_init();
 	idt_init();
 	pic_init();
 
