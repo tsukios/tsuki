@@ -1,7 +1,17 @@
 #ifndef ISR_H
 #define ISR_H
 
-extern void isr_wrapper(void);
-void isr_handle(void);
+#include <stdint.h>
+
+struct interrupt_frame {
+	uint16_t ip;
+	uint16_t cs;
+	uint16_t flags;
+	uint16_t sp;
+	uint16_t ss;
+};
+
+__attribute__((interrupt)) void isr_hardware_handle(struct interrupt_frame* frame);
+__attribute__((interrupt)) void isr_software_handle(struct interrupt_frame* frame);
 
 #endif

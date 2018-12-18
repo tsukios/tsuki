@@ -12,8 +12,15 @@
 
 void idt_init(void)
 {
-	for (int i = 0; i < 256; i++)
-		idt_encode_entry(idt[i], (uint32_t) &isr_wrapper, INTERRUPT_GATE | RING_ZERO | PRESENT);
+	for (int i = 0; i < 256; i++) {
+		uint32_t address;
+		if ((i >= 0x20 && i <= 0x2F) || (i >= 0x70 && i <= 0x77))
+			address = (uint32_t) &isr_hardware_handle;
+		else
+			address = (uint32_t) &isr_software_handle;
+
+		idt_encode_entry(idt[i], address, INTERRUPT_GATE | RING_ZERO | PRESENT);
+	}
 
 	idt_pointer.offset = (uint32_t) &idt;
 	idt_pointer.size = sizeof(idt) - 1;
