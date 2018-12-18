@@ -9,7 +9,7 @@ void serial_init(int port_idx);
 int serial_received(int port_idx);
 char serial_read(int port_idx);
 int serial_transmit_empty(int port_idx);
-void serial_write(int port_idx, char c);
+void serial_putchar(int port_idx, char c);
 void serial_writestring(int port_idx, const char* data);
 
 #endif

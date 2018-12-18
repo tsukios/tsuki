@@ -33,18 +33,18 @@ int serial_transmit_empty(int port_idx)
 	return io_inb(port + 5) & 0x20;
 }
 
-void serial_write(int port_idx, char c)
+void serial_putchar(int port_idx, char c)
 {
 	uint16_t port = SERIAL_PORT[port_idx];
 	while (!serial_transmit_empty(port_idx));
+	if (c == '\n')
+		serial_putchar(port_idx, '\r');
 	io_outb(port, c);
 }
 
 void serial_writestring(int port_idx, const char* data)
 {
 	for (size_t i = 0; i < strlen(data); i++) {
-		if (data[i] == '\n')
-			serial_write(port_idx, '\r');
-		serial_write(port_idx, data[i]);
+		serial_putchar(port_idx, data[i]);
 	}
 }
