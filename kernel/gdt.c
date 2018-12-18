@@ -1,6 +1,6 @@
 #include "gdt.h"
 
-void gdt_init()
+void gdt_init(void)
 {
 	gdt_encode_entry(gdt[0], 0, 0, 0); // null 
 	gdt_encode_entry(gdt[1], 0, 0xFFFFFFFF, 0x9A); // kernel code
