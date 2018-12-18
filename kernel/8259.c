@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include "8259.h"
 #include "io.h"
 

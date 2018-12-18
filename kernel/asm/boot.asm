@@ -21,8 +21,6 @@ section .text
 	_start:
 		mov esp, stack_top
 	
-		; GDT here, paging here
-	
 		extern kernel_main
 		call kernel_main
 		

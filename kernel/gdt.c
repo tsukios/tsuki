@@ -1,7 +1,9 @@
+#include <stdint.h>
 #include "gdt.h"
 
 void gdt_init(void)
 {
+	// Flat GDT setup, 4GiB of untranslated addresses
 	gdt_encode_entry(gdt[0], 0, 0, 0); // null 
 	gdt_encode_entry(gdt[1], 0, 0xFFFFFFFF, 0x9A); // kernel code
 	gdt_encode_entry(gdt[2], 0, 0xFFFFFFFF, 0x92); // kernel data
@@ -14,11 +16,13 @@ void gdt_init(void)
 
 void gdt_encode_entry(uint8_t* target, uint32_t base, uint32_t limit, uint8_t type)
 {
+	// If limit is big, it must be a multiple of 4KiB
 	if ((limit > 0x10000) && (limit & 0xFFF) != 0xFFF) {
 		return; // error here
 	}
 
 	if (limit > 0x10000) {
+		// Divide limit by 4K, change granularity to 4KiB
 		limit >>= 12;
 		target[6] = 0xC0;
 	} else {

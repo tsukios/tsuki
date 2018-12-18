@@ -1,3 +1,5 @@
+#include <stdint.h>
+#include <stddef.h>
 #include "idt.h"
 #include "isr.h"
 
@@ -12,7 +14,9 @@
 
 void idt_init(void)
 {
+	// Fill IDT with 256 entries
 	for (int i = 0; i < 256; i++) {
+		// Use isr_hardware_handle if vector is for IRQs, software otherwise
 		uint32_t address;
 		if ((i >= 0x20 && i <= 0x2F) || (i >= 0x70 && i <= 0x77))
 			address = (uint32_t) &isr_hardware_handle;
@@ -39,8 +43,10 @@ void idt_encode_entry(uint8_t* target, uint32_t address, uint8_t type_attr)
 
 	target[5] = type_attr;
 
+	// Point to kernel code selector...
 	target[2] = 8;
 	target[3] = 0;
 
+	// ...from GDT
 	target[4] = 0;
 }
