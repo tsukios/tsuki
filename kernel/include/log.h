@@ -3,6 +3,7 @@
 
 enum log_type {
 	LOG_NONE,
+	LOG_OK,
 	LOG_INFO,
 	LOG_WARNING,
 	LOG_ERROR,

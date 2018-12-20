@@ -11,9 +11,10 @@
 void pic_init(void)
 {
 	pic_remap(0x20, 0x70);
-	pic_clear_masks();
+	pic_set_masks();
+	pic_clear_mask(1);
 
-	log(LOG_INFO, "8259 PIC module initialized\n");
+	log(LOG_OK, "8259 PIC module initialized\n");
 }
 
 void pic_send_eoi(uint8_t irq)

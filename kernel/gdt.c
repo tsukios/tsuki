@@ -15,7 +15,7 @@ void gdt_init(void)
 
 	gdt_flush((size_t) &gdt_pointer);
 
-	log(LOG_INFO, "GDT module initialized\n");
+	log(LOG_OK, "GDT module initialized\n");
 }
 
 void gdt_encode_entry(uint8_t* target, uint32_t base, uint32_t limit, uint8_t type)

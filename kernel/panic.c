@@ -25,8 +25,8 @@ void panic(const char* message)
 	__asm__ ( "cli" );
 
 	terminal_setcolor(vga_entry_color(VGA_COLOR_RED, VGA_COLOR_BLACK));
-	terminal_writestring("\n\n *** KERNEL PANIC *** \n");
-	serial_writestring(0, "\n\n *** KERNEL PANIC *** \n");
+	terminal_writestring("\n\n**** KERNEL PANIC ****\n");
+	serial_writestring(0, "\n\n**** KERNEL PANIC ****\n");
 	terminal_setcolor(vga_entry_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK));
 
 	terminal_writestring(message);
@@ -43,32 +43,32 @@ void panic_exception(int vec, struct isr_interrupt_frame* frame)
 	const char* name = EXCEPTION_NAMES[vec];
 
 	terminal_setcolor(vga_entry_color(VGA_COLOR_RED, VGA_COLOR_BLACK));
-	terminal_writestring("\n\n *** KERNEL PANIC *** \n");
-	serial_writestring(0, "\n\n *** KERNEL PANIC *** \n");
+	terminal_writestring("\n\n**** KERNEL PANIC ****\n");
+	serial_writestring(0, "\n\n**** KERNEL PANIC ****\n");
 	terminal_setcolor(vga_entry_color(VGA_COLOR_LIGHT_GRAY, VGA_COLOR_BLACK));
 
-	terminal_writestring("  Caused by exception ");
+	terminal_writestring("Caused by exception ");
 	terminal_writestring(name);
-	serial_writestring(0, "  Caused by exception ");
+	serial_writestring(0, "Caused by exception ");
 	serial_writestring(0, name);
 
 	if (vec == 15 || vec == 31 || (vec >= 21 && vec <= 29)) {
-		terminal_writestring("\n  This exception doesn't exist, it was most likely intentionally invoked through software");
-		serial_writestring(0, "\n  This exception doesn't exist, it was most likely intentionally invoked through software");
+		terminal_writestring("\nThis exception doesn't exist, it was most likely intentionally invoked through software");
+		serial_writestring(0, "\nThis exception doesn't exist, it was most likely intentionally invoked through software");
 	} else if (vec == 9) {
-		terminal_writestring("\n  This is a legacy exception, it only happens in outdated hardware");
-		serial_writestring(0, "\n  This is a legacy exception, it only happens in outdated hardware");
+		terminal_writestring("\nThis is a legacy exception, it only happens in outdated hardware");
+		serial_writestring(0, "\nThis is a legacy exception, it only happens in outdated hardware");
 	}
 
-	terminal_writestring("\n  Frame dump:\n");
-	serial_writestring(0, "\n  Frame dump:\n");
+	terminal_writestring("\nFrame dump:\n");
+	serial_writestring(0, "\nFrame dump:\n");
 
-	dump("    INT", vec);
-	dump("    IP", frame->ip);
-	dump("    CS", frame->cs);
-	dump("    FLAGS", frame->flags);
-	dump("    SP", frame->sp);
-	dump("    SS", frame->ss);
+	dump("INT", vec);
+	dump("IP", frame->ip);
+	dump("CS", frame->cs);
+	dump("FLAGS", frame->flags);
+	dump("SP", frame->sp);
+	dump("SS", frame->ss);
 
 	while (1)
 		__asm__ ( "hlt" );

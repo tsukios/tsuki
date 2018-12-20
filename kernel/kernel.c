@@ -3,6 +3,7 @@
 #include "gdt.h"
 #include "idt.h"
 #include "8259.h"
+#include "keyboard.h"
 #include "log.h"
 
 void kernel_main(void)
@@ -12,13 +13,16 @@ void kernel_main(void)
 	gdt_init();
 	idt_init();
 	pic_init();
+	keyboard_init();
 
 	__asm__ ( "sti" );
 
-	log(LOG_INFO, "Kernel initialized");
+	log(LOG_INFO, "All modules loaded\n");
 
-	__asm__ (
+	while (1);
+
+	/*__asm__ (
 		"movl $1, %eax\n\t"
 		"movl $0, %ecx\n\t"
-		"div %ecx" );
+		"div %ecx" );*/
 }

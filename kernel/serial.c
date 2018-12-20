@@ -14,7 +14,7 @@ void serial_init(int port_idx)
 	io_outb(port + 2, 0xC7); // Enable FIFO and clear
 	io_outb(port + 4, 0x0B); // Enable IRQ, RTS/DSR set
 
-	log(LOG_INFO, "Serial module initialized\n");
+	log(LOG_OK, "Serial module initialized\n");
 }
 
 int serial_received(int port_idx)

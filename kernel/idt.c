@@ -19,23 +19,23 @@ void idt_init(void)
 	// Fill IDT with handler functions
 	for (int i = 0; i < 256; i++) {
 		void (*address)(struct isr_interrupt_frame*);
-		uint8_t type_attr = RING_ZERO | PRESENT;
+		uint8_t type_attr = RING_ZERO | PRESENT | INTERRUPT_GATE;
 
 		// Add generic handlers
 		// Use isr_hardware_handle if vector is for IRQs, software otherwise
 		if ((i >= 0x20 && i <= 0x2F) || (i >= 0x70 && i <= 0x77)) {
 			address = &isr_hardware_handle;
-			type_attr |= INTERRUPT_GATE;
 		} else {
 			address = &isr_software_handle;
-			type_attr |= INTERRUPT_GATE;
 		}
 
 		// Add specific handlers
 		switch (i) {
 			case 0:
 				address = &exception_divide_by_zero;
-				type_attr |= INTERRUPT_GATE;
+				break;
+			case 0x21:
+				address = &isr_keyboard;
 				break;
 		}
 
@@ -49,7 +49,7 @@ void idt_init(void)
 
 	__asm__ ( "int $0x80" );
 
-	log(LOG_INFO, "IDT module initialized\n");
+	log(LOG_OK, "IDT module initialized\n");
 }
 
 void idt_encode_entry(uint8_t* target, uint32_t address, uint8_t type_attr)

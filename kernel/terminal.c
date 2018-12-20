@@ -23,7 +23,7 @@ void terminal_init(void)
 		}
 	}
 
-	log(LOG_INFO, "Terminal module activated\n");
+	log(LOG_OK, "Terminal module activated\n");
 }
  
 void terminal_setcolor(uint8_t color) 
