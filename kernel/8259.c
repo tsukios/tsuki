@@ -53,6 +53,42 @@ void pic_remap(uint8_t master_offset, uint8_t slave_offset)
 	io_outb(SLAVE_DATA, slave_mask);
 }
 
+void pic_set_mask(uint8_t line)
+{
+	uint16_t port;
+
+	if (line < 8) {
+		port = MASTER_DATA;
+	} else {
+		port = SLAVE_DATA;
+		line -= 8;
+	}
+
+	uint8_t value = io_inb(port) | 1 << line;
+	io_outb(port, value);
+}
+
+void pic_clear_mask(uint8_t line)
+{
+	uint16_t port;
+
+	if (line < 8) {
+		port = MASTER_DATA;
+	} else {
+		port = SLAVE_DATA;
+		line -= 8;
+	}
+
+	uint8_t value = io_inb(port) & ~(1 << line);
+	io_outb(port, value);
+}
+
+void pic_set_masks(void)
+{
+	io_outb(MASTER_DATA, 0xFF);
+	io_outb(SLAVE_DATA, 0xFF);
+}
+
 void pic_clear_masks(void)
 {
 	io_outb(MASTER_DATA, 0);
