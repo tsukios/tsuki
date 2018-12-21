@@ -1,7 +1,7 @@
 #include "isr.h"
 #include "terminal.h"
 #include "keyboard.h"
-#include "8259.h"
+#include "pic.h"
 
 #include <stdlib.h>
 

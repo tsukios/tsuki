@@ -1,4 +1,4 @@
-#include "8259.h"
+#include "pic.h"
 #include "io.h"
 #include "log.h"
 

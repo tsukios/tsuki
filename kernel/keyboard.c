@@ -1,7 +1,7 @@
 #include "keyboard.h"
 #include "io.h"
 #include "terminal.h"
-#include "8259.h"
+#include "pic.h"
 #include "isr.h"
 #include "idt.h"
 #include "log.h"

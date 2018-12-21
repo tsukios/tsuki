@@ -2,7 +2,7 @@
 #include "serial.h"
 #include "gdt.h"
 #include "idt.h"
-#include "8259.h"
+#include "pic.h"
 #include "exception.h"
 #include "keyboard.h"
 #include "log.h"
