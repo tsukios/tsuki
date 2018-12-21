@@ -1,9 +1,10 @@
+#include "terminal.h"
+#include "log.h"
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
-#include "terminal.h"
-#include "log.h"
 
 size_t terminal_row;
 size_t terminal_column;

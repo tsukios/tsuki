@@ -1,7 +1,8 @@
-#include <stdint.h>
 #include "gdt.h"
 #include "panic.h"
 #include "log.h"
+
+#include <stdint.h>
 
 void gdt_init(void)
 {

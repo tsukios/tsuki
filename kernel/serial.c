@@ -1,7 +1,8 @@
-#include <string.h>
 #include "io.h"
 #include "serial.h"
 #include "log.h"
+
+#include <string.h>
 
 void serial_init(int port_idx)
 {

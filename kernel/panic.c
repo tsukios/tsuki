@@ -1,8 +1,9 @@
-#include <stdlib.h>
 #include "panic.h"
 #include "isr.h"
 #include "serial.h"
 #include "terminal.h"
+
+#include <stdlib.h>
 
 static inline void dump(const char* name, unsigned int value)
 {

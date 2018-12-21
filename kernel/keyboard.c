@@ -1,9 +1,8 @@
-#include <stdint.h>
 #include "keyboard.h"
 #include "io.h"
 #include "log.h"
 
-#define PORT 0x60
+#include <stdint.h>
 
 void keyboard_init(void)
 {
@@ -12,7 +11,7 @@ void keyboard_init(void)
 
 uint8_t keyboard_read_scan_code(void)
 {
-	return io_inb(PORT);
+	return io_inb(0x60);
 }
 
 char keyboard_to_ascii(enum keyboard_keycode code)

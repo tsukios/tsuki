@@ -1,9 +1,10 @@
-#include <stdint.h>
-#include <stddef.h>
 #include "idt.h"
 #include "isr.h"
 #include "exception.h"
 #include "log.h"
+
+#include <stdint.h>
+#include <stddef.h>
 
 #define INTERRUPT_GATE  0b00001110
 #define TRAP_GATE       0b00001111

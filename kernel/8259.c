@@ -1,7 +1,8 @@
-#include <stdint.h>
 #include "8259.h"
 #include "io.h"
 #include "log.h"
+
+#include <stdint.h>
 
 #define MASTER_COMMAND  0x20
 #define MASTER_DATA     0x21
