@@ -16,12 +16,3 @@ void isr_software_handle(struct isr_interrupt_frame* frame)
 {
 	terminal_writestring("[S]");
 }
-
-__attribute__((interrupt))
-void isr_keyboard(struct isr_interrupt_frame* frame)
-{
-	char key = keyboard_to_ascii(keyboard_read_scan_code());
-	if (key != 0)
-		terminal_putchar(key);
-	pic_send_eoi(1);
-}

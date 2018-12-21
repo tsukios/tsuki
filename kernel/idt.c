@@ -6,19 +6,14 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define INTERRUPT_GATE  0b00001110
-#define TRAP_GATE       0b00001111
-#define TASK_GATE       0b00010101
-
-#define RING_ZERO       0b00000000
-#define RING_THREE      0b01000000
-
-#define PRESENT         0b10000000
-
 void idt_init(void)
 {
 	// Fill IDT with handler functions
 	for (int i = 0; i < 256; i++) {
+		// Skip non-empty entries
+		if (idt[i][2] != 0)
+			continue;
+		
 		void (*address)(struct isr_interrupt_frame*);
 		uint8_t type_attr = RING_ZERO | PRESENT | INTERRUPT_GATE;
 
@@ -30,17 +25,7 @@ void idt_init(void)
 			address = &isr_software_handle;
 		}
 
-		// Add specific handlers
-		switch (i) {
-			case 0:
-				address = &exception_divide_by_zero;
-				break;
-			case 0x21:
-				address = &isr_keyboard;
-				break;
-		}
-
-		idt_encode_entry(idt[i], (uint32_t) address, type_attr);
+		idt_encode_entry(idt[i], address, type_attr);
 	}
 
 	idt_pointer.offset = (uint32_t) &idt;
@@ -53,8 +38,10 @@ void idt_init(void)
 	log(LOG_OK, "IDT module initialized\n");
 }
 
-void idt_encode_entry(uint8_t* target, uint32_t address, uint8_t type_attr)
+void idt_encode_entry(uint8_t* target, void (*func)(struct isr_interrupt_frame*), uint8_t type_attr)
 {
+	uint32_t address = (uint32_t) func;
+
 	target[0] = address & 0xFF;
 	target[1] = (address >> 8) & 0xFF;
 	target[6] = (address >> 16) & 0xFF;

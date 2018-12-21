@@ -1,11 +1,17 @@
 #include "keyboard.h"
 #include "io.h"
+#include "terminal.h"
+#include "8259.h"
+#include "isr.h"
+#include "idt.h"
 #include "log.h"
 
 #include <stdint.h>
 
 void keyboard_init(void)
 {
+	idt_encode_entry(idt[0x21], &keyboard_isr, INTERRUPT_GATE | RING_ZERO | PRESENT);
+
 	log(LOG_OK, "PS/2 keyboard module initialized\n");
 }
 
@@ -26,4 +32,13 @@ char keyboard_to_ascii(enum keyboard_keycode code)
 	else if (code >= 0x2C && code <= 0x32)
 		return "zxcvbnm"[code - 0x2C];
 	return 0;
+}
+
+__attribute__((interrupt))
+void keyboard_isr(struct isr_interrupt_frame* frame)
+{
+	char key = keyboard_to_ascii(keyboard_read_scan_code());
+	if (key)
+		terminal_putchar(key);
+	pic_send_eoi(1);
 }

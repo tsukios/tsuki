@@ -13,6 +13,5 @@ struct isr_interrupt_frame {
 
 __attribute__((interrupt)) void isr_hardware_handle(struct isr_interrupt_frame* frame);
 __attribute__((interrupt)) void isr_software_handle(struct isr_interrupt_frame* frame);
-__attribute__((interrupt)) void isr_keyboard(struct isr_interrupt_frame* frame);
 
 #endif

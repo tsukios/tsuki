@@ -1,6 +1,10 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
+#include "isr.h"
+
+#include <stdint.h>
+
 enum keyboard_keycode {
 	Q_PRESSED = 0x10,
 	Q_RELEASED = 0x90,
@@ -65,5 +69,6 @@ enum keyboard_keycode {
 void keyboard_init(void);
 uint8_t keyboard_read_scan_code(void);
 char keyboard_to_ascii(enum keyboard_keycode code);
+__attribute__((interrupt)) void keyboard_isr(struct isr_interrupt_frame* frame);
 
 #endif
