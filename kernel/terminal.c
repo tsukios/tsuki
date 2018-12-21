@@ -63,7 +63,7 @@ void terminal_putchar(char c)
 	}
 }
 
-void terminal_scroll()
+void terminal_scroll(void)
 {
 	for (size_t y = 1; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
