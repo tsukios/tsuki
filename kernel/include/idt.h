@@ -25,6 +25,6 @@ uint8_t idt[256][8];
 
 extern void idt_flush(size_t pointer);
 void idt_init(void);
-void idt_encode_entry(uint8_t* target, void (*func)(struct isr_interrupt_frame*), uint8_t type_attr);
+void idt_encode_entry(uint8_t target[8], void (*func)(struct isr_interrupt_frame*), uint8_t type_attr);
 
 #endif

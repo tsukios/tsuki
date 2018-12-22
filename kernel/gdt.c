@@ -19,7 +19,7 @@ void gdt_init(void)
 	log(LOG_OK, "GDT module initialized\n");
 }
 
-void gdt_encode_entry(uint8_t* target, uint32_t base, uint32_t limit, uint8_t type)
+void gdt_encode_entry(uint8_t target[8], uint32_t base, uint32_t limit, uint8_t type)
 {
 	// If limit is big, it must be a multiple of 4KiB
 	if ((limit > 0x10000) && (limit & 0xFFF) != 0xFFF)

@@ -14,6 +14,6 @@ uint8_t gdt[3][8];
 
 extern void gdt_flush(size_t pointer);
 void gdt_init(void);
-void gdt_encode_entry(uint8_t* target, uint32_t base, uint32_t limit, uint8_t type);
+void gdt_encode_entry(uint8_t target[8], uint32_t base, uint32_t limit, uint8_t type);
 
 #endif

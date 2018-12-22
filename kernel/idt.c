@@ -38,7 +38,7 @@ void idt_init(void)
 	log(LOG_OK, "IDT module initialized\n");
 }
 
-void idt_encode_entry(uint8_t* target, void (*func)(struct isr_interrupt_frame*), uint8_t type_attr)
+void idt_encode_entry(uint8_t target[8], void (*func)(struct isr_interrupt_frame*), uint8_t type_attr)
 {
 	uint32_t address = (uint32_t) func;
 
