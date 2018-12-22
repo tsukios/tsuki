@@ -21,7 +21,7 @@ compiler = "clang"
 compiler_flags = "--target=i686-elf -march=i686"
 
 compile_flags = "-std=c99 -ffreestanding -O2 -Wall -Wextra -nostdlib -fno-builtin"
-link_flags = f"-T {linker_script} -ffreestanding -O2 -nostdlib -lgcc"
+link_flags = f"-T {linker_script} -ffreestanding -O2 -nostdlib"
 
 obj_dir = "obj/"
 kernel_dir = "kernel/"
