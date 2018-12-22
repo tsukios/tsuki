@@ -6,14 +6,14 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define INTERRUPT_GATE  0b00001110
-#define TRAP_GATE       0b00001111
-#define TASK_GATE       0b00010101
+#define IDT_INTERRUPT_GATE  0b00001110
+#define IDT_TRAP_GATE       0b00001111
+#define IDT_TASK_GATE       0b00010101
 
-#define RING_ZERO       0b00000000
-#define RING_THREE      0b01000000
+#define IDT_RING_ZERO       0b00000000
+#define IDT_RING_THREE      0b01000000
 
-#define PRESENT         0b10000000
+#define IDT_PRESENT         0b10000000
 
 struct idt_pointer {
 	uint16_t size;

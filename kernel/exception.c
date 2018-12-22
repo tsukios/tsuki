@@ -6,7 +6,7 @@
 
 void exception_init(void)
 {
-	idt_encode_entry(idt[0], &exception_divide_by_zero, RING_ZERO | PRESENT | INTERRUPT_GATE);
+	idt_encode_entry(idt[0], &exception_divide_by_zero, IDT_RING_ZERO | IDT_PRESENT | IDT_INTERRUPT_GATE);
 	log(LOG_OK, "Exception module initialized\n");
 }
 

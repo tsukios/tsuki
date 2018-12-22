@@ -10,7 +10,7 @@
 
 void keyboard_init(void)
 {
-	idt_encode_entry(idt[0x21], &keyboard_isr, INTERRUPT_GATE | RING_ZERO | PRESENT);
+	idt_encode_entry(idt[0x21], &keyboard_isr, IDT_INTERRUPT_GATE | IDT_RING_ZERO | IDT_PRESENT);
 
 	log(LOG_OK, "PS/2 keyboard module initialized\n");
 }

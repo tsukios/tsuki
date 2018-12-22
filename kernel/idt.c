@@ -15,7 +15,7 @@ void idt_init(void)
 			continue;
 		
 		void (*address)(struct isr_interrupt_frame*);
-		uint8_t type_attr = RING_ZERO | PRESENT | INTERRUPT_GATE;
+		uint8_t type_attr = IDT_RING_ZERO | IDT_PRESENT | IDT_INTERRUPT_GATE;
 
 		// Add generic handlers
 		// Use isr_hardware_handle if vector is for IRQs, software otherwise
