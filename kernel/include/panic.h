@@ -38,7 +38,7 @@ static const char *EXCEPTION_NAMES[] = {
 	"UNKNOWN",
 };
 
-void panic(const char* message);
-void panic_exception(int vec, struct isr_interrupt_frame* frame);
+__attribute__((noreturn)) void panic(const char* message);
+__attribute__((noreturn)) void panic_exception(int vec, struct isr_interrupt_frame* frame);
 
 #endif

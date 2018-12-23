@@ -21,6 +21,7 @@ static inline void dump(const char* name, unsigned int value)
 	serial_putchar(0, '\n');
 }
 
+__attribute__((noreturn))
 void panic(const char* message)
 {
 	__asm__ ( "cli" );
@@ -37,6 +38,7 @@ void panic(const char* message)
 		__asm__ ( "hlt" );
 }
 
+__attribute__((noreturn))
 void panic_exception(int vec, struct isr_interrupt_frame* frame)
 {
 	__asm__ ( "cli" );
