@@ -11,9 +11,9 @@
 void kernel_main(void)
 {
 	serial_init(0);
+	paging_init();
 	terminal_init();
 	gdt_init();
-	paging_init();
 	pic_init();
 	exception_init();
 	keyboard_init();
@@ -26,7 +26,7 @@ void kernel_main(void)
 	log(LOG_INFO, "All modules loaded\n");
 
 	// Test page fault
-	unsigned char* ptr = (unsigned char*) 0x400000;
+	unsigned char* ptr = (unsigned char*) 0x10B000;
 	*ptr = 'a';
 
 	while (1);

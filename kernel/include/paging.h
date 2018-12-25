@@ -30,14 +30,15 @@ struct page_table_entry {
 	unsigned int address: 20;
 } __attribute__((packed));
 
-typedef struct page_directory_entry page_directory_t[1024];
-typedef struct page_table_entry page_table_t[1024];
+typedef struct page_directory_entry page_directory_t[1024] __attribute__((aligned(4096)));
+typedef struct page_table_entry page_table_t[1024] __attribute__((aligned(4096)));
 
-page_directory_t page_directory __attribute__((aligned(4096)));
-page_table_t page_tables[1] __attribute__((aligned(4096)));
+page_directory_t page_directory;
+page_table_t page_tables[1024]; // This takes up 4MiB of memory, probably should be allocated dynamically in the future
 
 extern void paging_enable(void);
 void paging_init(void);
-void paging_identity(page_table_t page_table, uint32_t address, int pages);
+void paging_identity(page_table_t page_table, uint32_t address, unsigned int pages);
+void paging_map_kernel(void);
 
 #endif
