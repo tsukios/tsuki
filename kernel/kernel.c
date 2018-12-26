@@ -8,6 +8,7 @@
 #include "paging.h"
 #include "multiboot.h"
 #include "panic.h"
+#include "kernel.h"
 #include "log.h"
 
 void kernel_main(multiboot_info_t* info)
@@ -29,7 +30,7 @@ void kernel_main(multiboot_info_t* info)
 		unsigned int available = 0;
 		multiboot_memory_map_t* map = (multiboot_memory_map_t*) info->mmap_addr;
 		while ((unsigned int) map < info->mmap_addr + info->mmap_length) {
-			log(LOG_INFO, "addr=%x, len=%x, type=%x\n", map->addr_low, map->len_low, map->type);
+			//log(LOG_INFO, "addr=%x, len=%x, type=%x\n", map->addr_low, map->len_low, map->type);
 			if (map->type == 1)
 				available += map->len_low;
 			map = (multiboot_memory_map_t*) ((unsigned int) map + map->size + sizeof(map->size));
@@ -38,8 +39,9 @@ void kernel_main(multiboot_info_t* info)
 		log(LOG_INFO, "Available memory: %dMiB\n", available / 1024 / 1024);
 	} else {
 		log(LOG_ERROR, "No memory map found\n");
-		panic("Couldn't find memory map\n");
 	}
+
+	log(LOG_INFO, "&kernel_start=%x, &kernel_end=%x\n", &kernel_start, &kernel_end);
 
 	__asm__ ( "sti" );
 
