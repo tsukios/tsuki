@@ -9,6 +9,6 @@ enum log_type {
 	LOG_ERROR,
 };
 
-void log(enum log_type type, const char* data);
+void log(enum log_type type, const char* data, ...);
 
 #endif

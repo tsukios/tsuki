@@ -3,7 +3,10 @@
 #include "serial.h"
 #include "stdint.h"
 
-void log(enum log_type type, const char* data)
+#include <stdarg.h>
+#include <stdlib.h>
+
+void log(enum log_type type, const char* data, ...)
 {
 	uint8_t color = terminal_getcolor();
 
@@ -34,6 +37,45 @@ void log(enum log_type type, const char* data)
 
 	terminal_setcolor(color);
 
-	terminal_writestring(data);
-	serial_writestring(0, data);
+	va_list args;
+	va_start(args, data);
+
+	for (const char* ptr = data; *ptr; ptr++) {
+		if (*ptr != '%') {
+			terminal_putchar(*ptr);
+			serial_putchar(0, *ptr);
+			continue;
+		}
+
+		ptr++;
+
+		char value;
+		char buffer[12];
+
+		switch (*ptr) {
+			case 'c':
+				value = va_arg(args, int);
+				terminal_putchar(value);
+				serial_putchar(0, value);
+				break;
+			case 'x':
+				itoa(va_arg(args, unsigned int), buffer, 16);
+				terminal_writestring(buffer);
+				serial_writestring(0, buffer);
+				break;
+			case 'd':
+				itoa(va_arg(args, unsigned int), buffer, 10);
+				terminal_writestring(buffer);
+				serial_writestring(0, buffer);
+				break;
+			case '%':
+				terminal_putchar('%');
+				serial_putchar(0, '%');
+				break;
+			default:
+				break;
+		}
+	}
+
+	va_end(args);
 }
