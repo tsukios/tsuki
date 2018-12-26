@@ -6,9 +6,11 @@
 #include "exception.h"
 #include "keyboard.h"
 #include "paging.h"
+#include "multiboot.h"
+#include "panic.h"
 #include "log.h"
 
-void kernel_main(void)
+void kernel_main(multiboot_info_t* info)
 {
 	serial_init(0);
 	paging_init();
@@ -20,6 +22,24 @@ void kernel_main(void)
 	// IDT is last so that the other modules can register
 	// interrupt handlers before the IDT is loaded
 	idt_init();
+
+	if (info->flags & MULTIBOOT_INFO_MEM_MAP) {
+		log(LOG_INFO, "Memory map found\n");
+
+		unsigned int available = 0;
+		multiboot_memory_map_t* map = (multiboot_memory_map_t*) info->mmap_addr;
+		while ((unsigned int) map < info->mmap_addr + info->mmap_length) {
+			log(LOG_INFO, "addr=%x, len=%x, type=%x\n", map->addr_low, map->len_low, map->type);
+			if (map->type == 1)
+				available += map->len_low;
+			map = (multiboot_memory_map_t*) ((unsigned int) map + map->size + sizeof(map->size));
+		}
+
+		log(LOG_INFO, "Available memory: %dMiB\n", available / 1024 / 1024);
+	} else {
+		log(LOG_ERROR, "No memory map found\n");
+		panic("Couldn't find memory map\n");
+	}
 
 	__asm__ ( "sti" );
 
