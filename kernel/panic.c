@@ -1,25 +1,9 @@
 #include "panic.h"
 #include "isr.h"
-#include "serial.h"
 #include "terminal.h"
+#include "log.h"
 
 #include <stdlib.h>
-
-static inline void dump(const char* name, unsigned int value)
-{
-	char buffer[12];
-	itoa(value, buffer, 16);
-
-	terminal_writestring(name);
-	terminal_putchar('=');
-	terminal_writestring(buffer);
-	terminal_putchar('\n');
-
-	serial_writestring(0, name);
-	serial_putchar(0, '=');
-	serial_writestring(0, buffer);
-	serial_putchar(0, '\n');
-}
 
 __attribute__((noreturn))
 void panic(const char* message, const char* file, unsigned int line)
@@ -27,31 +11,11 @@ void panic(const char* message, const char* file, unsigned int line)
 	__asm__ ( "cli" );
 
 	terminal_setcolor(vga_entry_color(VGA_COLOR_RED, VGA_COLOR_BLACK));
-	terminal_writestring("\n\n**** KERNEL PANIC ****\n");
-	serial_writestring(0, "\n\n**** KERNEL PANIC ****\n");
+	log(LOG_NONE, "\n\n**** KERNEL PANIC ****\n");
 	terminal_setcolor(vga_entry_color(VGA_COLOR_LIGHT_GRAY, VGA_COLOR_BLACK));
 
-	terminal_writestring("From ");
-	serial_writestring(0, "From ");
-
-	terminal_writestring(file);
-	serial_writestring(0, file);
-
-	terminal_putchar(':');
-	serial_putchar(0, ':');
-	
-	{
-		char buffer[12];
-		itoa(line, buffer, 10);
-		terminal_writestring(buffer);
-		serial_writestring(0, buffer);
-	}
-
-	terminal_putchar('\n');
-	serial_putchar(0, '\n');
-
-	terminal_writestring(message);
-	serial_writestring(0, message);
+	log(LOG_NONE, "From %s:%d\n", file, line);
+	log(LOG_NONE, message);
 
 	while (1)
 		__asm__ ( "hlt" );
@@ -65,32 +29,25 @@ void panic_exception(int vec, struct isr_interrupt_frame* frame)
 	const char* name = EXCEPTION_NAMES[vec];
 
 	terminal_setcolor(vga_entry_color(VGA_COLOR_RED, VGA_COLOR_BLACK));
-	terminal_writestring("\n\n**** KERNEL PANIC ****\n");
-	serial_writestring(0, "\n\n**** KERNEL PANIC ****\n");
+	log(LOG_NONE, "\n\n**** KERNEL PANIC ****\n");
 	terminal_setcolor(vga_entry_color(VGA_COLOR_LIGHT_GRAY, VGA_COLOR_BLACK));
 
-	terminal_writestring("Caused by exception ");
-	terminal_writestring(name);
-	serial_writestring(0, "Caused by exception ");
-	serial_writestring(0, name);
+	log(LOG_NONE, "Caused by exception %s\n", name);
 
 	if (vec == 15 || vec == 31 || (vec >= 21 && vec <= 29)) {
-		terminal_writestring("\nThis exception doesn't exist, it was most likely intentionally invoked through software");
-		serial_writestring(0, "\nThis exception doesn't exist, it was most likely intentionally invoked through software");
+		log(LOG_NONE, "This exception doesn't exist, it was most likely intentionally invoked through software\n");
 	} else if (vec == 9) {
-		terminal_writestring("\nThis is a legacy exception, it only happens in outdated hardware");
-		serial_writestring(0, "\nThis is a legacy exception, it only happens in outdated hardware");
+		log(LOG_NONE, "This is a legacy exception, it only happens in outdated hardware\n");
 	}
 
-	terminal_writestring("\nFrame dump:\n");
-	serial_writestring(0, "\nFrame dump:\n");
+	log(LOG_NONE, "Frame dump:\n");
 
-	dump("INT", vec);
-	dump("IP", frame->ip);
-	dump("CS", frame->cs);
-	dump("FLAGS", frame->flags);
-	dump("SP", frame->sp);
-	dump("SS", frame->ss);
+	log(LOG_NONE, "INT=%d\n", vec);
+	log(LOG_NONE, "IP=%d\n", frame->ip);
+	log(LOG_NONE, "CS=%d\n", frame->cs);
+	log(LOG_NONE, "FLAGS=%d\n", frame->flags);
+	log(LOG_NONE, "SP=%d\n", frame->sp);
+	log(LOG_NONE, "SS=%d\n", frame->ss);
 
 	while (1)
 		__asm__ ( "hlt" );
