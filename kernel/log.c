@@ -50,9 +50,15 @@ void log(enum log_type type, const char* data, ...)
 		ptr++;
 
 		char value;
+		char* string_pointer;
 		char buffer[12];
 
 		switch (*ptr) {
+			case 's':
+				string_pointer = (char*) va_arg(args, unsigned int);
+				terminal_writestring(string_pointer);
+				serial_writestring(0, string_pointer);
+				break;
 			case 'c':
 				value = va_arg(args, int);
 				terminal_putchar(value);
