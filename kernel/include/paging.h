@@ -35,10 +35,15 @@ typedef struct page_table_entry page_table_t[1024] __attribute__((aligned(4096))
 
 page_directory_t page_directory;
 page_table_t page_tables[1024]; // This takes up 4MiB of memory, probably should be allocated dynamically in the future
+uint8_t page_frame_bitmap[131072]; // 131072 * 8 (bits in byte) * 4KiB (page size) = 4GiB (accessible memory)
 
 extern void paging_enable(void);
 void paging_init(void);
-void paging_identity(page_table_t page_table, uint32_t address, unsigned int pages);
+void* paging_allocate_frame(void);
+void paging_free_frame(void* frame);
+void* paging_allocate_page(void);
+void paging_free_page(void* pointer);
+void paging_map(unsigned int physical, unsigned int virtual);
 void paging_map_kernel(void);
 
 #endif

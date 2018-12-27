@@ -48,7 +48,7 @@ void kernel_main(multiboot_info_t* info)
 	log(LOG_INFO, "All modules loaded\n");
 
 	// Test page fault
-	unsigned char* ptr = (unsigned char*) 0x10B000;
+	unsigned char* ptr = (unsigned char*) 0x52A000;
 	*ptr = 'a';
 
 	while (1);
