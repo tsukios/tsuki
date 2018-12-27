@@ -23,7 +23,7 @@ void paging_init(void)
 void* paging_allocate_frame(size_t frames)
 {
 	if (frames == 0)
-		panic("Tried to allocate zero frames\n");
+		PANIC("Tried to allocate zero frames\n");
 
 	// 1MiB offset
 	unsigned int index = 256;
@@ -32,7 +32,7 @@ find_empty_frame:
 	// Find free frame
 	while (page_frame_bitmap[index/8] & (index << index%8)) {
 		if (++index == 131072 * 8)
-			panic("Couldn't allocate frame, possibly ran out of memory\n");
+			PANIC("Couldn't allocate frame, possibly ran out of memory\n");
 	}
 
 	if (frames > 1) {
@@ -44,7 +44,7 @@ find_empty_frame:
 			if (++consecutive == frames)
 				break;
 			if (++index == 131072 * 8)
-				panic("Couldn't allocate frame, possibly ran out of memory\n");
+				PANIC("Couldn't allocate frame, possibly ran out of memory\n");
 		}
 
 		// If there's not enough space, search for another block
@@ -71,7 +71,7 @@ find_empty_frame:
 void paging_free_frame(void* frame, size_t frames)
 {
 	if (frames == 0)
-		panic("Tried to free zero frames\n");
+		PANIC("Tried to free zero frames\n");
 
 	unsigned int index = (unsigned int) frame / 4096;
 
@@ -88,7 +88,7 @@ void paging_free_frame(void* frame, size_t frames)
 void* paging_allocate_page(size_t pages)
 {
 	if (pages == 0)
-		panic("Tried to allocate zero pages\n");
+		PANIC("Tried to allocate zero pages\n");
 
 	void* pointer = paging_allocate_frame(pages);
 	unsigned int address = (unsigned int) pointer;
@@ -103,7 +103,7 @@ void* paging_allocate_page(size_t pages)
 void paging_free_page(void* pointer, size_t pages)
 {
 	if (pages == 0)
-		panic("Tried to free zero pages\n");
+		PANIC("Tried to free zero pages\n");
 
 	unsigned int address = (unsigned int) pointer;
 
@@ -118,10 +118,10 @@ void paging_map(unsigned int physical, unsigned int virtual)
 {
 	// Ensure addresses are 4KiB-aligned
 	if ((virtual & 0xFFF) != 0)
-		panic("Invalid virtual address specified for mapping\n");
+		PANIC("Invalid virtual address specified for mapping\n");
 
 	if ((physical & 0xFFF) != 0)
-		panic("Invalid physical address specified for mapping\n");
+		PANIC("Invalid physical address specified for mapping\n");
 
 	// Mark PDE as present if it isn't already
 	struct page_directory_entry* pde = &page_directory[virtual / (4*1024*1024)];

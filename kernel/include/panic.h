@@ -3,6 +3,8 @@
 
 #include "isr.h"
 
+#define PANIC(message) panic(message, __FILE__, __LINE__)
+
 static const char *EXCEPTION_NAMES[] = {
 	"DIVIDE_BY_ZERO",
 	"DEBUG",
@@ -38,7 +40,7 @@ static const char *EXCEPTION_NAMES[] = {
 	"UNKNOWN",
 };
 
-__attribute__((noreturn)) void panic(const char* message);
+__attribute__((noreturn)) void panic(const char* message, const char* file, unsigned int line);
 __attribute__((noreturn)) void panic_exception(int vec, struct isr_interrupt_frame* frame);
 
 #endif

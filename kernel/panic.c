@@ -22,14 +22,33 @@ static inline void dump(const char* name, unsigned int value)
 }
 
 __attribute__((noreturn))
-void panic(const char* message)
+void panic(const char* message, const char* file, unsigned int line)
 {
 	__asm__ ( "cli" );
 
 	terminal_setcolor(vga_entry_color(VGA_COLOR_RED, VGA_COLOR_BLACK));
 	terminal_writestring("\n\n**** KERNEL PANIC ****\n");
 	serial_writestring(0, "\n\n**** KERNEL PANIC ****\n");
-	terminal_setcolor(vga_entry_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK));
+	terminal_setcolor(vga_entry_color(VGA_COLOR_LIGHT_GRAY, VGA_COLOR_BLACK));
+
+	terminal_writestring("From ");
+	serial_writestring(0, "From ");
+
+	terminal_writestring(file);
+	serial_writestring(0, file);
+
+	terminal_putchar(':');
+	serial_putchar(0, ':');
+	
+	{
+		char buffer[12];
+		itoa(line, buffer, 10);
+		terminal_writestring(buffer);
+		serial_writestring(0, buffer);
+	}
+
+	terminal_putchar('\n');
+	serial_putchar(0, '\n');
 
 	terminal_writestring(message);
 	serial_writestring(0, message);

@@ -14,8 +14,8 @@
 void kernel_main(multiboot_info_t* info)
 {
 	serial_init(0);
-	paging_init();
 	terminal_init();
+	paging_init();
 	gdt_init();
 	pic_init();
 	exception_init();

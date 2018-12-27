@@ -23,7 +23,7 @@ void gdt_encode_entry(uint8_t target[8], uint32_t base, uint32_t limit, uint8_t 
 {
 	// If limit is big, it must be a multiple of 4KiB
 	if ((limit > 0x10000) && (limit & 0xFFF) != 0xFFF)
-		panic("Invalid GDT limit specified\nThis shouldn't ever happen\n");
+		PANIC("Invalid GDT limit specified, this shouldn't ever happen\n");
 
 	if (limit > 0x10000) {
 		// Divide limit by 4K, change granularity to 4KiB
