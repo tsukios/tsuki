@@ -1,6 +1,7 @@
 #ifndef PAGING_H
 #define PAGING_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 struct page_directory_entry {
@@ -39,11 +40,10 @@ uint8_t page_frame_bitmap[131072]; // 131072 * 8 (bits in byte) * 4KiB (page siz
 
 extern void paging_enable(void);
 void paging_init(void);
-void* paging_allocate_frame(void);
-void paging_free_frame(void* frame);
-void* paging_allocate_page(void);
-void paging_free_page(void* pointer);
+void* paging_allocate_frame(size_t frames);
+void paging_free_frame(void* frame, size_t frames);
+void* paging_allocate_page(size_t pages);
+void paging_free_page(void* pointer, size_t pages);
 void paging_map(unsigned int physical, unsigned int virtual);
-void paging_map_kernel(void);
 
 #endif

@@ -13,55 +13,105 @@ void paging_init(void)
 		paging_map(address, address);
 
 	// Identity map kernel
-	paging_map_kernel();
+	paging_allocate_page(((uint32_t) &kernel_end - (uint32_t) &kernel_start) / 4096);
 
 	paging_enable();
 
 	log(LOG_OK, "Paging module initialized\n");
 }
 
-void* paging_allocate_frame(void)
+void* paging_allocate_frame(size_t frames)
 {
-	unsigned int i = 256;
+	if (frames == 0)
+		panic("Tried to allocate zero frames\n");
 
+	// 1MiB offset
+	unsigned int index = 256;
+
+find_empty_frame:
 	// Find free frame
-	while (page_frame_bitmap[i/8] & (1 << i%8)) {
-		i++;
-		if (i == 131072 * 8)
+	while (page_frame_bitmap[index/8] & (index << index%8)) {
+		if (++index == 131072 * 8)
 			panic("Couldn't allocate frame, possibly ran out of memory\n");
 	}
 
-	// Mark as used
-	page_frame_bitmap[i/8] |= 1 << i%8;
+	if (frames > 1) {
+		unsigned int start = index; // Store index of start of block
+		size_t consecutive = 0;
 
-	// Return frame physical address
-	return (void*) (i * 4096);
+		// Count consecutive free frames
+		while (!(page_frame_bitmap[index/8] & (1 << index%8))) {
+			if (++consecutive == frames)
+				break;
+			if (++index == 131072 * 8)
+				panic("Couldn't allocate frame, possibly ran out of memory\n");
+		}
+
+		// If there's not enough space, search for another block
+		if (!(consecutive == frames)) {
+			index++;
+			goto find_empty_frame;
+		}
+
+		// Mark block as used
+		for (unsigned int i = start; i < start+frames; i++)
+			page_frame_bitmap[i/8] |= 1 << i%8;
+
+		// Return block physical address
+		return (void*) (start * 4096);
+	} else {
+		// Mark as used
+		page_frame_bitmap[index/8] |= 1 << index%8;
+
+		// Return frame physical address
+		return (void*) (index * 4096);
+	}
 }
 
-void paging_free_frame(void* frame)
+void paging_free_frame(void* frame, size_t frames)
 {
-	unsigned int address = (unsigned int) frame / 4096;
+	if (frames == 0)
+		panic("Tried to free zero frames\n");
 
-	// Mark as free
-	page_frame_bitmap[address/8] &= ~(1 << address%8);
+	unsigned int index = (unsigned int) frame / 4096;
+
+	if (frames > 1) {
+		// Mark block as free
+		for (unsigned int i = index; i < index+frames; i++)
+			page_frame_bitmap[i/8] &= ~(1 << i%8);
+	} else {
+		// Mark as free
+		page_frame_bitmap[index/8] &= ~(1 << index%8);
+	}
 }
 
-void* paging_allocate_page(void)
+void* paging_allocate_page(size_t pages)
 {
-	void* pointer = paging_allocate_frame();
+	if (pages == 0)
+		panic("Tried to allocate zero pages\n");
+
+	void* pointer = paging_allocate_frame(pages);
 	unsigned int address = (unsigned int) pointer;
 
-	paging_map(address, address);
+	// Identity map pages
+	for (; pages > 0; pages--, address += 4096)
+		paging_map(address, address);
 
 	return pointer;
 }
 
-void paging_free_page(void* pointer)
+void paging_free_page(void* pointer, size_t pages)
 {
-	paging_free_frame(pointer);
+	if (pages == 0)
+		panic("Tried to free zero pages\n");
+
 	unsigned int address = (unsigned int) pointer;
 
-	page_tables[address / (4*1024*1024)][(address / (4*1024)) % 1024].present = 0;
+	paging_free_frame(pointer, pages);
+
+	// Mark PTEs as not present
+	for (; pages > 0; pages--, address += 4096)
+		page_tables[address / (4*1024*1024)][(address / (4*1024)) % 1024].present = 0;
 }
 
 void paging_map(unsigned int physical, unsigned int virtual)
@@ -84,15 +134,4 @@ void paging_map(unsigned int physical, unsigned int virtual)
 	struct page_table_entry* pte = &page_tables[virtual / (4*1024*1024)][(virtual / (4*1024)) % 1024];
 	pte->address = physical >> 12;
 	pte->present = 1;
-}
-
-void paging_map_kernel(void)
-{
-	uint32_t address = (uint32_t) &kernel_start;
-	uint32_t end = (uint32_t) &kernel_end;
-
-	while (address < end) {
-		paging_allocate_page();
-		address += 4096;
-	}
 }
