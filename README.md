@@ -10,5 +10,6 @@ Try with `python build.py all qemu`.
 - Yasm (or Nasm, change assembler in `build.py`)
 - GRUB
 - Xorriso
+- Mtools
 - Python 3.6+ (for `build.py`)
 - QEMU (optional, to use `qemu` target)
