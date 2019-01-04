@@ -10,6 +10,7 @@
 #include "panic.h"
 #include "kernel.h"
 #include "log.h"
+#include "format.h"
 
 void kernel_main(multiboot_info_t* info)
 {
@@ -46,6 +47,10 @@ void kernel_main(multiboot_info_t* info)
 	__asm__ ( "sti" );
 
 	log(LOG_INFO, "All modules loaded\n");
+
+	char buffer[1024];
+	format(buffer, "format test %s %d %x %c", "abc", 333, 0x5FF, 'l');
+	terminal_writestring(buffer);
 
 	// Test page fault
 	unsigned char* ptr = (unsigned char*) 0x52A000;

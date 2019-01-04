@@ -4,8 +4,6 @@
 #include "log.h"
 #include "serial.h"
 
-#include <stdlib.h>
-
 void paging_init(void)
 {
 	// Identity page the first MiB

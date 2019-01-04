@@ -3,8 +3,6 @@
 #include "terminal.h"
 #include "log.h"
 
-#include <stdlib.h>
-
 __attribute__((noreturn))
 void panic(const char* message, const char* file, unsigned int line)
 {

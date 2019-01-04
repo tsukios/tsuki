@@ -1,10 +1,10 @@
 #include "log.h"
 #include "terminal.h"
 #include "serial.h"
-#include "stdint.h"
+#include "format.h"
 
+#include <stdint.h>
 #include <stdarg.h>
-#include <stdlib.h>
 
 void log(enum log_type type, const char* data, ...)
 {
@@ -40,48 +40,11 @@ void log(enum log_type type, const char* data, ...)
 	va_list args;
 	va_start(args, data);
 
-	for (const char* ptr = data; *ptr; ptr++) {
-		if (*ptr != '%') {
-			terminal_putchar(*ptr);
-			serial_putchar(0, *ptr);
-			continue;
-		}
+	char buffer[1024];
+	format_inner(buffer, data, args);
 
-		ptr++;
-
-		char value;
-		char* string_pointer;
-		char buffer[12];
-
-		switch (*ptr) {
-			case 's':
-				string_pointer = (char*) va_arg(args, unsigned int);
-				terminal_writestring(string_pointer);
-				serial_writestring(0, string_pointer);
-				break;
-			case 'c':
-				value = va_arg(args, int);
-				terminal_putchar(value);
-				serial_putchar(0, value);
-				break;
-			case 'x':
-				itoa(va_arg(args, unsigned int), buffer, 16);
-				terminal_writestring(buffer);
-				serial_writestring(0, buffer);
-				break;
-			case 'd':
-				itoa(va_arg(args, unsigned int), buffer, 10);
-				terminal_writestring(buffer);
-				serial_writestring(0, buffer);
-				break;
-			case '%':
-				terminal_putchar('%');
-				serial_putchar(0, '%');
-				break;
-			default:
-				break;
-		}
-	}
+	terminal_writestring(buffer);
+	serial_writestring(0, buffer);
 
 	va_end(args);
 }

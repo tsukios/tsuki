@@ -3,8 +3,6 @@
 #include "keyboard.h"
 #include "pic.h"
 
-#include <stdlib.h>
-
 __attribute__((interrupt))
 void isr_hardware_handle(struct isr_interrupt_frame* frame)
 {
