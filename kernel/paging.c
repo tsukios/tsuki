@@ -11,7 +11,7 @@ void paging_init(void)
 		paging_map(address, address);
 
 	// Identity map kernel
-	paging_allocate_page(((uint32_t) &kernel_end - (uint32_t) &kernel_start) / 4096);
+	paging_allocate_page(((uint32_t) &kernel_end - (uint32_t) &kernel_start) / 4096 + 1);
 
 	paging_enable();
 
