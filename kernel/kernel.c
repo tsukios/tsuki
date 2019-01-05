@@ -11,6 +11,7 @@
 #include "kernel.h"
 #include "log.h"
 #include "format.h"
+#include "liballoc.h"
 
 void kernel_main(multiboot_info_t* info)
 {
@@ -48,19 +49,15 @@ void kernel_main(multiboot_info_t* info)
 
 	log(LOG_INFO, "All modules loaded\n");
 
-	char buffer[1024];
-	format(buffer, "format test %s %d %x %c", "abc", 333, 0x5FF, 'l');
-	terminal_writestring(buffer);
-
 	// Test page fault
-	unsigned char* ptr = (unsigned char*) 0x52A000;
-	*ptr = 'a';
+	//unsigned char* ptr = (unsigned char*) 0x52A000;
+	//*ptr = 'a';
 
 	while (1);
 
 	// Test division by zero
-	__asm__ (
+	/*__asm__ (
 		"movl $1, %eax\n\t"
 		"movl $0, %ecx\n\t"
-		"div %ecx" );
+		"div %ecx" );*/
 }
