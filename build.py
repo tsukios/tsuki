@@ -29,12 +29,12 @@ libc_dir = "libc/"
 asm_dir = f"{kernel_dir}asm/"
 
 iso_dir = "iso/"
-build_dir = "build/"
+build_dir = "bin/"
 
 bin_file = f"{build_dir}tsukios.bin"
 iso_file = f"{build_dir}tsukios.iso"
 
-qemu_flags = "-s"
+qemu_flags = "-drive file=disk,format=raw -s"
 
 def assemble():
 	for file in glob.glob(asm_dir + "**/*.asm", recursive=True):
