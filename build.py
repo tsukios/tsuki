@@ -34,7 +34,7 @@ build_dir = "bin/"
 bin_file = f"{build_dir}tsukios.bin"
 iso_file = f"{build_dir}tsukios.iso"
 
-qemu_flags = "-drive file=disk,format=raw -s"
+qemu_flags = "-s"
 
 def assemble():
 	for file in glob.glob(asm_dir + "**/*.asm", recursive=True):
