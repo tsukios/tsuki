@@ -12,6 +12,7 @@
 #include "log.h"
 #include "format.h"
 #include "liballoc.h"
+#include "tar.h"
 
 void kernel_main(multiboot_info_t* info)
 {
@@ -44,6 +45,21 @@ void kernel_main(multiboot_info_t* info)
 	}
 
 	log(LOG_INFO, "&kernel_start=%x, &kernel_end=%x\n", &kernel_start, &kernel_end);
+	
+	for (unsigned int index = 0; index < info->mods_count; index++) {
+		multiboot_module_t* module = (multiboot_module_t*) ((unsigned int) info->mods_addr + index);
+		log(LOG_INFO, "Module %d: %x to %x\n", index, module->mod_start, module->mod_end);
+
+		paging_allocate_page((module->mod_end - module->mod_start) / 4096 + 1);
+		unsigned int count = tar_count_headers(module->mod_start);
+		log(LOG_INFO, "tar: Headers found: %d\n", count);
+		struct tar_header** headers = tar_parse_headers(module->mod_start, count);
+		for (unsigned int index = 0; index < count; index++) {
+			struct tar_header* header = headers[index];
+			log(LOG_INFO, "tar: File %d Name: %s\n", index, header->name);
+			log(LOG_INFO, "tar: File %d Content: %s\n", index, tar_get_content(module->mod_start, header));
+		}
+	}
 
 	__asm__ ( "sti" );
 
