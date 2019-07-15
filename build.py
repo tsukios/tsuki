@@ -28,6 +28,7 @@ kernel_dir = "kernel/"
 libc_dir = "libc/"
 asm_dir = f"{kernel_dir}asm/"
 
+initrd_dir = "initrd/"
 iso_dir = "iso/"
 build_dir = "bin/"
 
@@ -52,6 +53,9 @@ def link():
 	obj_files = glob.glob(obj_dir + "**/*.o", recursive=True)
 	run(f"{compiler} {link_flags} {' '.join(list(obj_files))} -o {bin_file} {compiler_flags}")
 
+def initrd():
+	run(f"tar -cvf {iso_dir}boot/tsukios.initrd {initrd_dir}*")
+
 def make_iso():
 	run(f"cp {bin_file} {iso_dir}boot/")
 	run(f"grub-mkrescue -o {iso_file} {iso_dir}")
@@ -61,6 +65,7 @@ def all():
 	compile_libc()
 	compile_kernel()
 	link()
+	initrd()
 	make_iso()
 
 def clean():
@@ -77,6 +82,7 @@ target_map = {
 	"libc": compile_libc,
 	"kernel": compile_kernel,
 	"link": link,
+	"initrd": initrd,
 	"iso": make_iso,
 	"all": all,
 	"clean": clean,
