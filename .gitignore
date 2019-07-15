@@ -2,3 +2,4 @@ bin/tsukios.bin
 bin/tsukios.iso
 obj/*.o
 iso/boot/tsukios.bin
+iso/boot/tsukios.initrd
