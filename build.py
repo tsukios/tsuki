@@ -54,6 +54,7 @@ def link():
 	run(f"{compiler} {link_flags} {' '.join(list(obj_files))} -o {bin_file} {compiler_flags}")
 
 def initrd():
+	run(f"{assembler} -fbin {initrd_dir}test.asm -o {initrd_dir}test")
 	run(f"tar -cvf {iso_dir}boot/tsukios.initrd {initrd_dir}*")
 
 def make_iso():

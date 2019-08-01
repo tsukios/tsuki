@@ -57,6 +57,8 @@ void kernel_main(multiboot_info_t* info)
 		for (unsigned int index = 0; index < count; index++) {
 			struct tar_header* header = headers[index];
 			log(LOG_INFO, "tar: File %d Name: %s\n", index, header->name);
+			if (index == 1)
+				((void (*)(void)) tar_get_content(module->mod_start, header))();
 			log(LOG_INFO, "tar: File %d Content: %s\n", index, tar_get_content(module->mod_start, header));
 		}
 	}

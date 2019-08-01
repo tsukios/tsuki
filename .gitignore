@@ -3,3 +3,4 @@ bin/tsukios.iso
 obj/*.o
 iso/boot/tsukios.bin
 iso/boot/tsukios.initrd
+initrd/test
