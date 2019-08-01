@@ -10,6 +10,8 @@ void gdt_init(void)
 	gdt_encode_entry(gdt[0], 0, 0, 0); // null 
 	gdt_encode_entry(gdt[1], 0, 0xFFFFFFFF, 0x9A); // kernel code
 	gdt_encode_entry(gdt[2], 0, 0xFFFFFFFF, 0x92); // kernel data
+	gdt_encode_entry(gdt[3], 0, 0xFFFFFFFF, 0xFA); // user code
+	gdt_encode_entry(gdt[4], 0, 0xFFFFFFFF, 0xF2); // user data
 
 	gdt_pointer.offset = (uint32_t) &gdt;
 	gdt_pointer.size = sizeof(gdt) - 1;

@@ -10,7 +10,7 @@ struct gdt_pointer {
 } __attribute__((__packed__));
 
 struct gdt_pointer gdt_pointer;
-uint8_t gdt[3][8];
+uint8_t gdt[5][8];
 
 extern void gdt_flush(size_t pointer);
 void gdt_init(void);
