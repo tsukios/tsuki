@@ -13,6 +13,7 @@
 #include "format.h"
 #include "liballoc.h"
 #include "tar.h"
+#include "process.h"
 
 void kernel_main(multiboot_info_t* info)
 {
@@ -50,15 +51,19 @@ void kernel_main(multiboot_info_t* info)
 		multiboot_module_t* module = (multiboot_module_t*) ((unsigned int) info->mods_addr + index);
 		log(LOG_INFO, "Module %d: %x to %x\n", index, module->mod_start, module->mod_end);
 
-		paging_allocate_page((module->mod_end - module->mod_start) / 4096 + 1);
+		paging_allocate_page((module->mod_end - module->mod_start) / 4096 + 1, 0, 0);
 		unsigned int count = tar_count_headers(module->mod_start);
 		log(LOG_INFO, "tar: Headers found: %d\n", count);
 		struct tar_header** headers = tar_parse_headers(module->mod_start, count);
 		for (unsigned int index = 0; index < count; index++) {
 			struct tar_header* header = headers[index];
 			log(LOG_INFO, "tar: File %d Name: %s\n", index, header->name);
-			if (index == 1)
-				((void (*)(void)) tar_get_content(module->mod_start, header))();
+			if (index == 1) {
+				struct process* process = process_spawn(tar_get_content(module->mod_start, header), tar_parse_size(header->size));
+				log(LOG_INFO, "%x %x %x %x", (uint32_t) process->code_page, process->code_page_count, (uint32_t) process->stack_page, process->stack_page_count);
+				process_jump(process);
+				//((void (*)(void)) tar_get_content(module->mod_start, header))();
+			}
 			log(LOG_INFO, "tar: File %d Content: %s\n", index, tar_get_content(module->mod_start, header));
 		}
 	}

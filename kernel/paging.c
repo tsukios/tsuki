@@ -7,11 +7,10 @@
 void paging_init(void)
 {
 	// Identity page the first MiB
-	for (unsigned int address = 0; address < 1024*1024; address += 4096)
-		paging_map(address, address);
+	paging_allocate_page(256, 0, 0);
 
 	// Identity map kernel
-	paging_allocate_page(((uint32_t) &kernel_end - (uint32_t) &kernel_start) / 4096 + 1);
+	paging_allocate_page(((uint32_t) &kernel_end - (uint32_t) &kernel_start) / 4096 + 1, 0, 0);
 
 	paging_enable();
 
@@ -23,12 +22,11 @@ void* paging_allocate_frame(size_t frames)
 	if (frames == 0)
 		PANIC("Tried to allocate zero frames\n");
 
-	// 1MiB offset
-	unsigned int index = 256;
+	unsigned int index = 0;
 
 find_empty_frame:
 	// Find free frame
-	while (page_frame_bitmap[index/8] & (index << index%8)) {
+	while (page_frame_bitmap[index/8] & (1 << index%8)) {
 		if (++index == 131072 * 8)
 			PANIC("Couldn't allocate frame, possibly ran out of memory\n");
 	}
@@ -83,7 +81,7 @@ void paging_free_frame(void* frame, size_t frames)
 	}
 }
 
-void* paging_allocate_page(size_t pages)
+void* paging_allocate_page(size_t pages, unsigned int user, unsigned int read_write)
 {
 	if (pages == 0)
 		PANIC("Tried to allocate zero pages\n");
@@ -93,7 +91,7 @@ void* paging_allocate_page(size_t pages)
 
 	// Identity map pages
 	for (; pages > 0; pages--, address += 4096)
-		paging_map(address, address);
+		paging_map(address, address, user, read_write);
 
 	return pointer;
 }
@@ -112,7 +110,7 @@ void paging_free_page(void* pointer, size_t pages)
 		page_tables[address / (4*1024*1024)][(address / (4*1024)) % 1024].present = 0;
 }
 
-void paging_map(unsigned int physical, unsigned int virtual)
+void paging_map(unsigned int physical, unsigned int virtual, unsigned int user, unsigned int read_write)
 {
 	// Ensure addresses are 4KiB-aligned
 	if ((virtual & 0xFFF) != 0)
@@ -126,10 +124,14 @@ void paging_map(unsigned int physical, unsigned int virtual)
 	if (!pde->present) {
 		pde->address = (unsigned int) &page_tables[virtual / (4*1024*1024)] >> 12;
 		pde->present = 1;
+		pde->user_access = user;
+		pde->read_write = read_write;
 	}
 
 	// Map PTE and mark as present
 	struct page_table_entry* pte = &page_tables[virtual / (4*1024*1024)][(virtual / (4*1024)) % 1024];
 	pte->address = physical >> 12;
 	pte->present = 1;
+	pte->user_access = user;
+	pte->read_write = read_write;
 }

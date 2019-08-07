@@ -42,8 +42,8 @@ extern void paging_enable(void);
 void paging_init(void);
 void* paging_allocate_frame(size_t frames);
 void paging_free_frame(void* frame, size_t frames);
-void* paging_allocate_page(size_t pages);
+void* paging_allocate_page(size_t pages, unsigned int user, unsigned int read_write);
 void paging_free_page(void* pointer, size_t pages);
-void paging_map(unsigned int physical, unsigned int virtual);
+void paging_map(unsigned int physical, unsigned int virtual, unsigned int user, unsigned int read_write);
 
 #endif
