@@ -20,7 +20,7 @@ void panic(const char* message, const char* file, unsigned int line)
 }
 
 __attribute__((noreturn))
-void panic_exception(int vec, struct isr_interrupt_frame* frame)
+void panic_exception(int vec, struct isr_interrupt_frame* frame, uint32_t error_code)
 {
 	__asm__ ( "cli" );
 
@@ -31,6 +31,7 @@ void panic_exception(int vec, struct isr_interrupt_frame* frame)
 	terminal_setcolor(vga_entry_color(VGA_COLOR_LIGHT_GRAY, VGA_COLOR_BLACK));
 
 	log(LOG_NONE, "Caused by exception %s\n", name);
+	log(LOG_NONE, "Error code: 0x%x\n", error_code);
 
 	if (vec == 15 || vec == 31 || (vec >= 21 && vec <= 29)) {
 		log(LOG_NONE, "This exception doesn't exist, it was most likely intentionally invoked through software\n");
@@ -40,12 +41,12 @@ void panic_exception(int vec, struct isr_interrupt_frame* frame)
 
 	log(LOG_NONE, "Frame dump:\n");
 
-	log(LOG_NONE, "INT=%d\n", vec);
-	log(LOG_NONE, "IP=%d\n", frame->ip);
-	log(LOG_NONE, "CS=%d\n", frame->cs);
-	log(LOG_NONE, "FLAGS=%d\n", frame->flags);
-	log(LOG_NONE, "SP=%d\n", frame->sp);
-	log(LOG_NONE, "SS=%d\n", frame->ss);
+	log(LOG_NONE, "INT=0x%x\n", vec);
+	log(LOG_NONE, "IP=0x%x\n", frame->ip);
+	log(LOG_NONE, "CS=0x%x\n", frame->cs);
+	log(LOG_NONE, "FLAGS=0x%x\n", frame->flags);
+	log(LOG_NONE, "SP=0x%x\n", frame->sp);
+	log(LOG_NONE, "SS=0x%x\n", frame->ss);
 
 	while (1)
 		__asm__ ( "hlt" );

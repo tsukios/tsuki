@@ -14,7 +14,7 @@ void idt_init(void)
 		if (idt[i][2] != 0)
 			continue;
 		
-		void (*address)(struct isr_interrupt_frame*);
+		void (*address)(struct isr_interrupt_frame*, uint32_t);
 		uint8_t type_attr = IDT_RING_ZERO | IDT_PRESENT | IDT_INTERRUPT_GATE;
 
 		// Add generic handlers
@@ -38,7 +38,7 @@ void idt_init(void)
 	log(LOG_OK, "IDT module initialized\n");
 }
 
-void idt_encode_entry(uint8_t target[8], void (*func)(struct isr_interrupt_frame*), uint8_t type_attr)
+void idt_encode_entry(uint8_t target[8], void (*func)(struct isr_interrupt_frame*, uint32_t), uint8_t type_attr)
 {
 	uint32_t address = (uint32_t) func;
 

@@ -41,6 +41,6 @@ static const char *EXCEPTION_NAMES[] = {
 };
 
 __attribute__((noreturn)) void panic(const char* message, const char* file, unsigned int line);
-__attribute__((noreturn)) void panic_exception(int vec, struct isr_interrupt_frame* frame);
+__attribute__((noreturn)) void panic_exception(int vec, struct isr_interrupt_frame* frame, uint32_t error_code);
 
 #endif

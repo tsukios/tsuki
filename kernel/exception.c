@@ -18,43 +18,43 @@ void exception_init(void)
 }
 
 __attribute__((interrupt))
-void exception_divide_by_zero(struct isr_interrupt_frame* frame)
+void exception_divide_by_zero(struct isr_interrupt_frame* frame, uint32_t error_code)
 {
-	panic_exception(0, frame);
+	panic_exception(0, frame, error_code);
 }
 
 __attribute__((interrupt))
-void exception_overflow(struct isr_interrupt_frame* frame)
+void exception_overflow(struct isr_interrupt_frame* frame, uint32_t error_code)
 {
-	panic_exception(4, frame);
+	panic_exception(4, frame, error_code);
 }
 
 __attribute__((interrupt))
-void exception_bound_range_exceeded(struct isr_interrupt_frame* frame)
+void exception_bound_range_exceeded(struct isr_interrupt_frame* frame, uint32_t error_code)
 {
-	panic_exception(5, frame);
+	panic_exception(5, frame, error_code);
 }
 
 __attribute__((interrupt))
-void exception_invalid_opcode(struct isr_interrupt_frame* frame)
+void exception_invalid_opcode(struct isr_interrupt_frame* frame, uint32_t error_code)
 {
-	panic_exception(6, frame);
+	panic_exception(6, frame, error_code);
 }
 
 __attribute__((interrupt))
-void exception_device_not_available(struct isr_interrupt_frame* frame)
+void exception_device_not_available(struct isr_interrupt_frame* frame, uint32_t error_code)
 {
-	panic_exception(7, frame);
+	panic_exception(7, frame, error_code);
 }
 
 __attribute__((interrupt))
-void exception_double_fault(struct isr_interrupt_frame* frame)
+void exception_double_fault(struct isr_interrupt_frame* frame, uint32_t error_code)
 {
-	panic_exception(8, frame);
+	panic_exception(8, frame, error_code);
 }
 
 __attribute__((interrupt))
-void exception_page_fault(struct isr_interrupt_frame* frame)
+void exception_page_fault(struct isr_interrupt_frame* frame, uint32_t error_code)
 {
-	panic_exception(14, frame);
+	panic_exception(14, frame, error_code);
 }
