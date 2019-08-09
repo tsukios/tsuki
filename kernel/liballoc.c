@@ -549,7 +549,7 @@ int liballoc_unlock()
 
 void* liballoc_alloc(int amount)
 {
-	return paging_allocate_page(amount, 0, 0);
+	return paging_allocate_page(amount, 0, PAGING_IDENTITY_MAP);
 }
 
 int liballoc_free(void* pointer, int amount)

@@ -51,7 +51,7 @@ void kernel_main(multiboot_info_t* info)
 		multiboot_module_t* module = (multiboot_module_t*) ((unsigned int) info->mods_addr + index);
 		log(LOG_INFO, "Module %d: %x to %x\n", index, module->mod_start, module->mod_end);
 
-		paging_allocate_page((module->mod_end - module->mod_start) / 4096 + 1, 0, 0);
+		paging_allocate_page((module->mod_end - module->mod_start) / 4096 + 1, 0, PAGING_IDENTITY_MAP);
 		unsigned int count = tar_count_headers(module->mod_start);
 		log(LOG_INFO, "tar: Headers found: %d\n", count);
 		struct tar_header** headers = tar_parse_headers(module->mod_start, count);

@@ -4,6 +4,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define PAGING_IDENTITY_MAP 0x01
+#define PAGING_READ_WRITE 0x02
+#define PAGING_USER_MODE 0x04
+
 struct page_directory_entry {
 	unsigned int present: 1;
 	unsigned int read_write: 1;
@@ -42,8 +46,8 @@ extern void paging_enable(void);
 void paging_init(void);
 void* paging_allocate_frame(size_t frames);
 void paging_free_frame(void* frame, size_t frames);
-void* paging_allocate_page(size_t pages, unsigned int user, unsigned int read_write);
+void* paging_allocate_page(uint32_t pages, uint32_t virtual, uint32_t flags);
 void paging_free_page(void* pointer, size_t pages);
-void paging_map(unsigned int physical, unsigned int virtual, unsigned int user, unsigned int read_write);
+void paging_map(uint32_t physical, uint32_t virtual, uint32_t flags);
 
 #endif
