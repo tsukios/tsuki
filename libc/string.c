@@ -16,3 +16,11 @@ char* strncpy(char* dest, const char* src, size_t n)
 		dest[n-1] = src[n-1];
 	return dest;
 }
+
+void* memset(void* str, int c, size_t n)
+{
+	char* str_c = (char*) str;
+	for (; n > 0; n--)
+		str_c[n-1] = (char) c;
+	return str;
+}
