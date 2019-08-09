@@ -4,11 +4,11 @@
 #include <stdint.h>
 
 struct isr_interrupt_frame {
-	uint16_t ip;
-	uint16_t cs;
-	uint16_t flags;
-	uint16_t sp;
-	uint16_t ss;
+	uint32_t ip;
+	uint32_t cs;
+	uint32_t flags;
+	uint32_t sp;
+	uint32_t ss;
 };
 
 __attribute__((interrupt)) void isr_hardware_handle(struct isr_interrupt_frame* frame);
