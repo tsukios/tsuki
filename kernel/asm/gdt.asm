@@ -12,3 +12,9 @@ section .text
 		jmp 0x08:reload_cs
 	reload_cs:
 		ret
+
+	global gdt_tss_flush
+	gdt_tss_flush:
+		mov ax, 0x28 | 3
+		ltr ax
+		ret

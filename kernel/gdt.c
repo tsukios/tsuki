@@ -12,11 +12,18 @@ void gdt_init(void)
 	gdt_encode_entry(gdt[2], 0, 0xFFFFFFFF, 0x92); // kernel data
 	gdt_encode_entry(gdt[3], 0, 0xFFFFFFFF, 0xFA); // user code
 	gdt_encode_entry(gdt[4], 0, 0xFFFFFFFF, 0xF2); // user data
+	gdt_encode_entry(gdt[5], (uint32_t) &gdt_tss, sizeof(gdt_tss), 0x89); // TSS
 
 	gdt_pointer.offset = (uint32_t) &gdt;
 	gdt_pointer.size = sizeof(gdt) - 1;
 
 	gdt_flush((size_t) &gdt_pointer);
+
+	memset(&gdt_tss, 0, sizeof(gdt_tss));
+	gdt_tss.ss0 = 0x10; // kernel data descriptor
+	gdt_tss.esp0 = (uint32_t) &stack_top; // kernel stack top
+	gdt_tss.iomap = (uint16_t) sizeof(gdt_tss); // don't care about iomap
+	gdt_tss_flush();
 
 	log(LOG_OK, "GDT module initialized\n");
 }
