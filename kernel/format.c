@@ -50,15 +50,15 @@ void format_inner(char* buffer, const char* string, va_list args)
 					*buf++ = *bnt_ptr;
 				buf--;
 				break;
-			/*case 'd':
+			case 'd':
 				format_int(bnt, va_arg(args, int), 10);
 				// Append bnt to buffer
 				for (char* bnt_ptr = bnt; *bnt_ptr; bnt_ptr++)
 					*buf++ = *bnt_ptr;
 				buf--;
-				break;*/
+				break;
 			case 'u':
-				format_int(bnt, va_arg(args, unsigned int), 10);
+				format_int(bnt, va_arg(args, int), 10);
 				// Append bnt to buffer
 				for (char* bnt_ptr = bnt; *bnt_ptr; bnt_ptr++)
 					*buf++ = *bnt_ptr;
@@ -76,7 +76,7 @@ void format_inner(char* buffer, const char* string, va_list args)
 	*buf = '\0';
 }
 
-void format_int(char* buffer, unsigned int value, int base)
+void format_int(char* buffer, int value, int base)
 {
 	char* ptr;
 	char* low;
