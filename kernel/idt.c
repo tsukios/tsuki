@@ -33,8 +33,6 @@ void idt_init(void)
 
 	idt_flush((size_t) &idt_pointer);
 
-	__asm__ ( "int $0x80" );
-
 	log(LOG_OK, "IDT module initialized\n");
 }
 

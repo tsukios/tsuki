@@ -11,7 +11,7 @@
 #define IDT_TASK_GATE       0b00010101
 
 #define IDT_RING_ZERO       0b00000000
-#define IDT_RING_THREE      0b01000000
+#define IDT_RING_THREE      0b01100000
 
 #define IDT_PRESENT         0b10000000
 

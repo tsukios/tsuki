@@ -14,6 +14,7 @@
 #include "liballoc.h"
 #include "tar.h"
 #include "process.h"
+#include "syscall.h"
 
 void kernel_main(multiboot_info_t* info)
 {
@@ -24,6 +25,7 @@ void kernel_main(multiboot_info_t* info)
 	pic_init();
 	exception_init();
 	keyboard_init();
+	syscall_init();
 	// IDT is last so that the other modules can register
 	// interrupt handlers before the IDT is loaded
 	idt_init();
@@ -60,7 +62,7 @@ void kernel_main(multiboot_info_t* info)
 			log(LOG_INFO, "tar: File %d Name: %s\n", index, header->name);
 			if (index == 1) {
 				struct process* process = process_spawn(tar_get_content(module->mod_start, header), tar_parse_size(header->size));
-				log(LOG_INFO, "%x %x %x %x", (uint32_t) process->code_page, process->code_page_count, (uint32_t) process->stack_page, process->stack_page_count);
+				log(LOG_INFO, "%x %x %x %x\n", (uint32_t) process->code_page, process->code_page_count, (uint32_t) process->stack_page, process->stack_page_count);
 				process_jump(process);
 				//((void (*)(void)) tar_get_content(module->mod_start, header))();
 			}
