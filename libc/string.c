@@ -10,10 +10,12 @@ size_t strlen(const char* str)
 	return len;
 }
 
-char* strncpy(char* dest, const char* src, size_t n)
+void* memcpy(void* dest, const void* src, size_t n)
 {
+	uint8_t* dest_b = (uint8_t*) dest;
+	uint8_t* src_b = (uint8_t*) src;
 	for (; n > 0; n--)
-		dest[n-1] = src[n-1];
+		dest_b[n-1] = src_b[n-1];
 	return dest;
 }
 

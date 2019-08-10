@@ -15,7 +15,7 @@ struct process* process_spawn(uint8_t* code, unsigned int size)
     // Put stack top at 4GiB
     process->stack_page = paging_allocate_page(process->stack_page_count, (unsigned int) -4096, PAGING_USER_MODE | PAGING_READ_WRITE);
     // Copy code to process
-    strncpy(process->code_page, (char*) code, size);
+    memcpy(process->code_page, (char*) code, size);
     return process;
 }
 
