@@ -10,6 +10,22 @@ size_t strlen(const char* str)
 	return len;
 }
 
+int strcmp(const char* str1, const char* str2)
+{
+	size_t n = 0;
+	for (; str1[n] == str2[n] && str1[n] != '\0'; n++);
+	return (int) str1[n] - str2[n];
+}
+
+char* strcpy(char* dest, const char* src)
+{
+	size_t n = 0;
+	for (; src[n] != '\0'; n++)
+		dest[n] = src[n];
+	dest[n] = '\0';
+	return dest;
+}
+
 void* memcpy(void* dest, const void* src, size_t n)
 {
 	uint8_t* dest_b = (uint8_t*) dest;
