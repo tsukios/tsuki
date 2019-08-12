@@ -102,8 +102,6 @@ struct tar_header* tar_find_file(struct vfs_device* device, char* file, uint32_t
         if (header->name[0] == '\0')
             return NULL;
         
-        log(LOG_OK, "%s\n", header->name);
-
         if (strcmp((char*) header->name, file) == 0) {
             if (address_buffer != NULL)
                 *address_buffer = address;
