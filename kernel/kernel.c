@@ -15,9 +15,12 @@
 #include "tar.h"
 #include "process.h"
 #include "syscall.h"
+#include "initrd.h"
+#include "vfs.h"
 
 void kernel_main(multiboot_info_t* info)
 {
+	// --- Before memory management ---
 	serial_init(0);
 	terminal_init();
 	paging_init();
@@ -26,6 +29,12 @@ void kernel_main(multiboot_info_t* info)
 	exception_init();
 	keyboard_init();
 	syscall_init();
+	tar_init();
+	// Initrd needs to be loaded here otherwise
+	// the other modules can accidentally overwrite it
+	initrd_init(info);
+	// --- After memory management ---
+	vfs_init();
 	// IDT is last so that the other modules can register
 	// interrupt handlers before the IDT is loaded
 	idt_init();
@@ -48,27 +57,6 @@ void kernel_main(multiboot_info_t* info)
 	}
 
 	log(LOG_INFO, "&kernel_start=%x, &kernel_end=%x\n", &kernel_start, &kernel_end);
-	
-	for (unsigned int index = 0; index < info->mods_count; index++) {
-		multiboot_module_t* module = (multiboot_module_t*) ((unsigned int) info->mods_addr + index);
-		log(LOG_INFO, "Module %d: %x to %x\n", index, module->mod_start, module->mod_end);
-
-		paging_allocate_page((module->mod_end - module->mod_start) / 4096 + 1, 0, PAGING_IDENTITY_MAP);
-		unsigned int count = tar_count_headers(module->mod_start);
-		log(LOG_INFO, "tar: Headers found: %d\n", count);
-		struct tar_header** headers = tar_parse_headers(module->mod_start, count);
-		for (unsigned int index = 0; index < count; index++) {
-			struct tar_header* header = headers[index];
-			log(LOG_INFO, "tar: File %d Name: %s\n", index, header->name);
-			if (index == 1) {
-				struct process* process = process_spawn(tar_get_content(module->mod_start, header), tar_parse_size(header->size));
-				log(LOG_INFO, "%x %x %x %x\n", (uint32_t) process->code_page, process->code_page_count, (uint32_t) process->stack_page, process->stack_page_count);
-				process_jump(process);
-				//((void (*)(void)) tar_get_content(module->mod_start, header))();
-			}
-			log(LOG_INFO, "tar: File %d Content: %s\n", index, tar_get_content(module->mod_start, header));
-		}
-	}
 
 	__asm__ ( "sti" );
 

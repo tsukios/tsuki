@@ -1,6 +1,8 @@
 #ifndef TAR_H
 #define TAR_H
 
+#include "vfs.h"
+
 #include <stdint.h>
 
 struct tar_header {
@@ -15,9 +17,18 @@ struct tar_header {
     uint8_t linked[100];
 };
 
-unsigned int tar_parse_size(const uint8_t* num);
-unsigned int tar_count_headers(unsigned int address);
-struct tar_header** tar_parse_headers(unsigned int address, unsigned int count);
-uint8_t* tar_get_content(unsigned int address, struct tar_header* header);
+struct vfs_fs tar_fs;
+
+struct tar_node_priv {
+    uint32_t address;
+};
+
+void tar_init(void);
+uint8_t tar_open(struct vfs_device* device, struct vfs_node* node, char* path);
+uint8_t tar_close(struct vfs_device* device, struct vfs_node* node);
+uint8_t tar_read(struct vfs_device* device, struct vfs_node* node, uint8_t* buffer, uint32_t len);
+uint8_t tar_write(struct vfs_device* device, struct vfs_node* node, uint8_t* content, uint32_t len);
+uint32_t tar_parse_size(const uint8_t* num);
+struct tar_header* tar_find_file(struct vfs_device* device, char* file, uint32_t* address_buffer);
 
 #endif
