@@ -66,5 +66,6 @@ uint8_t vfs_find_mount(char* path, uint8_t* offset)
         index--;
     }
 
+    free((void*) copy);
     return 0;
 }
