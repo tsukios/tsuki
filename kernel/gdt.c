@@ -19,7 +19,6 @@ void gdt_init(void)
 
 	gdt_flush((size_t) &gdt_pointer);
 
-	memset(&gdt_tss, 0, sizeof(gdt_tss));
 	gdt_tss.ss0 = 0x10; // kernel data descriptor
 	gdt_tss.esp0 = (uint32_t) &stack_top; // kernel stack top
 	gdt_tss.iomap = (uint16_t) sizeof(gdt_tss); // don't care about iomap
