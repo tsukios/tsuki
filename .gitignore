@@ -1,3 +1,4 @@
+.vscode
 bin/tsukios.bin
 bin/tsukios.iso
 obj/*.o
