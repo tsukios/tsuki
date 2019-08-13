@@ -10,15 +10,14 @@ void vfs_init(void)
     if (strcmp(vfs_mounts[0].path, "/") != 0)
         PANIC("No root mount point found\n");
 
-    //log(LOG_INFO, "%d\n", vfs_find_mount("/hello/world/", NULL));
     log(LOG_OK, "VFS module initialized\n");
 }
 
 uint32_t vfs_register_device(
     char* name,
     struct vfs_fs* fs,
-    uint8_t (*read)(uint8_t* buffer, uint32_t offset, uint32_t len),
-    uint8_t (*write)(uint8_t* buffer, uint32_t offset, uint32_t len))
+    enum error_code (*read)(uint8_t* buffer, uint32_t offset, uint32_t len),
+    enum error_code (*write)(uint8_t* buffer, uint32_t offset, uint32_t len))
 {
     if (vfs_devices_len == VFS_DEVICE_MAX)
         PANIC("Exceeded VFS device max\n");
@@ -45,7 +44,52 @@ uint32_t vfs_mount(char* path, uint32_t device)
     return vfs_mounts_len - 1;
 }
 
-uint8_t vfs_find_mount(char* path, uint8_t* offset)
+enum error_code vfs_open(struct vfs_node* node, char* path)
+{
+    size_t offset;
+    struct vfs_mount* mount = vfs_find_mount(path, &offset);
+    struct vfs_device* device = vfs_get_device(mount->device);
+
+    if (device == NULL)
+        return ERROR;
+
+    return device->fs->open(device, node, path + offset);
+}
+
+enum error_code vfs_close(struct vfs_node* node)
+{
+    struct vfs_mount* mount = vfs_find_mount(node->path, NULL);
+    struct vfs_device* device = vfs_get_device(mount->device);
+
+    if (device == NULL)
+        return ERROR;
+
+    return device->fs->close(device, node);
+}
+
+enum error_code vfs_read(struct vfs_node* node, uint8_t* buffer, uint32_t len)
+{
+    struct vfs_mount* mount = vfs_find_mount(node->path, NULL);
+    struct vfs_device* device = vfs_get_device(mount->device);
+
+    if (device == NULL)
+        return ERROR;
+
+    return device->fs->read(device, node, buffer, len);
+}
+
+enum error_code vfs_write(struct vfs_node* node, uint8_t* content, uint32_t len)
+{
+    struct vfs_mount* mount = vfs_find_mount(node->path, NULL);
+    struct vfs_device* device = vfs_get_device(mount->device);
+
+    if (device == NULL)
+        return ERROR;
+
+    return device->fs->write(device, node, content, len);
+}
+
+struct vfs_mount* vfs_find_mount(char* path, size_t* offset)
 {
     char* copy = (char*) malloc(strlen(path) + 1);
     strcpy(copy, path);
@@ -55,11 +99,12 @@ uint8_t vfs_find_mount(char* path, uint8_t* offset)
         if (copy[index] == '/') {
             copy[index] = '\0';
             for (uint8_t n = 0; n < vfs_mounts_len; n++) {
-                if (strcmp(vfs_mounts[n].path, copy) == 0) {
+                struct vfs_mount* mount = &vfs_mounts[n];
+                if (strcmp(mount->path, copy) == 0) {
                     if (offset != NULL)
-                        *offset = (uint8_t) strlen(copy) - 1;
+                        *offset = strlen(copy);
                     free((void*) copy);
-                    return n;
+                    return mount;
                 }
             }
         }
@@ -67,5 +112,7 @@ uint8_t vfs_find_mount(char* path, uint8_t* offset)
     }
 
     free((void*) copy);
-    return 0;
+    if (offset != NULL)
+        *offset = 1;
+    return &vfs_mounts[0];
 }

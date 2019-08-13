@@ -18,7 +18,7 @@ void tar_init(void)
     log(LOG_OK, "Tar module initialized\n");
 }
 
-uint8_t tar_open(struct vfs_device* device, struct vfs_node* node, char* path)
+enum error_code tar_open(struct vfs_device* device, struct vfs_node* node, char* path)
 {
     uint32_t address;
     struct tar_header* header = tar_find_file(device, path, &address);
@@ -38,7 +38,7 @@ uint8_t tar_open(struct vfs_device* device, struct vfs_node* node, char* path)
     return 0;
 }
 
-uint8_t tar_close(struct vfs_device* device, struct vfs_node* node)
+enum error_code tar_close(struct vfs_device* device, struct vfs_node* node)
 {
     free(node->priv);
     free((void*) node);
@@ -46,7 +46,7 @@ uint8_t tar_close(struct vfs_device* device, struct vfs_node* node)
     return 0;
 }
 
-uint8_t tar_read(struct vfs_device* device, struct vfs_node* node, uint8_t* buffer, uint32_t len)
+enum error_code tar_read(struct vfs_device* device, struct vfs_node* node, uint8_t* buffer, uint32_t len)
 {
     uint32_t address = ((struct tar_node_priv*) node->priv)->address;
     address += 512;
@@ -71,7 +71,7 @@ uint8_t tar_read(struct vfs_device* device, struct vfs_node* node, uint8_t* buff
     }
 }
 
-uint8_t tar_write(struct vfs_device* device, struct vfs_node* node, uint8_t* content, uint32_t len)
+enum error_code tar_write(struct vfs_device* device, struct vfs_node* node, uint8_t* content, uint32_t len)
 {
     // tar is read-only
     return 1;

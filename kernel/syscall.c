@@ -1,8 +1,10 @@
 #include "syscall.h"
 #include "idt.h"
 #include "log.h"
+#include "vfs.h"
 
 #include <stdint.h>
+#include <stddef.h>
 
 void syscall_init(void)
 {
@@ -11,14 +13,55 @@ void syscall_init(void)
 	log(LOG_OK, "Syscall module initialized\n");
 }
 
-void syscall_handle(const struct syscall_registers* registers)
+void syscall_handle(struct syscall_registers* registers)
 {
 	switch (registers->eax) {
-		case 0x1:
-			log(LOG_NONE, "%s", registers->ebx + 1024*1024*1024);
+		// print (temporary)
+		case 0x01:
+			ADDR_CHECK(registers->ebx);
+
+			log(LOG_NONE, "%s", registers->ebx + ADDR_OFFSET);
+
+			registers->eax = 0;
+			break;
+		// vfs_open
+		case 0x10:
+			ADDR_CHECK(registers->ebx);
+			ADDR_CHECK(registers->ecx);
+
+			registers->eax = (uint32_t) vfs_open(
+				(struct vfs_node*) (registers->ebx + ADDR_OFFSET),
+				(char*) (registers->ecx + ADDR_OFFSET));
+			break;
+		// vfs_close
+		case 0x11:
+			ADDR_CHECK(registers->ebx);
+
+			registers->eax = (uint32_t) vfs_close(
+				(struct vfs_node*) (registers->ebx + ADDR_OFFSET));
+			break;
+		// vfs_read
+		case 0x12:
+			ADDR_CHECK(registers->ebx);
+			ADDR_CHECK(registers->ecx);
+
+			registers->eax = (uint32_t) vfs_read(
+				(struct vfs_node*) (registers->ebx + ADDR_OFFSET),
+				(uint8_t*) (registers->ecx + ADDR_OFFSET),
+				(uint32_t) registers->edx);
+			break;
+		// vfs_write
+		case 0x13:
+			ADDR_CHECK(registers->ebx);
+			ADDR_CHECK(registers->ecx);
+
+			registers->eax = (uint32_t) vfs_write(
+				(struct vfs_node*) (registers->ebx + ADDR_OFFSET),
+				(uint8_t*) (registers->ecx + ADDR_OFFSET),
+				(uint32_t) registers->edx);
 			break;
 		default:
-			log(LOG_NONE, "WTF");
+			registers->eax = (uint32_t) SYSCALL_UNKNOWN;
 			break;
 	}
 }

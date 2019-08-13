@@ -17,6 +17,7 @@
 #include "syscall.h"
 #include "initrd.h"
 #include "vfs.h"
+#include "error.h"
 
 void kernel_main(multiboot_info_t* info)
 {
@@ -58,9 +59,30 @@ void kernel_main(multiboot_info_t* info)
 
 	log(LOG_INFO, "&kernel_start=%x, &kernel_end=%x\n", &kernel_start, &kernel_end);
 
-	__asm__ ( "sti" );
+	//__asm__ ( "sti" );
 
 	log(LOG_INFO, "All modules loaded\n");
+
+    // Load user mode program
+    struct vfs_node node;
+    enum error_code ret = vfs_open(&node, "/initrd/test");
+    //log(LOG_INFO, "vfs_open: RET=%d, PATH=%s, SIZE=%d, ACCESS=%d, POS=%d\n",
+    //    ret, node.path, node.size, node.access_mode, node.position);
+
+	if (ret != OK)
+		PANIC("Couldn't open init program\n");
+
+    uint8_t* buffer = (uint8_t*) malloc(node.size);
+    ret = vfs_read(&node, buffer, node.size);
+    //log(LOG_INFO, "vfs_read: RET=%d, N=20, BUFFER=%s\n", ret, buffer);
+
+	if (ret != OK)
+		PANIC("Couldn't read init program\n");
+
+    struct process* process = process_spawn(buffer, node.size);
+    process_jump(process);
+
+    free((void*) buffer);
 
 	// Test page fault
 	//unsigned char* ptr = (unsigned char*) 0x52A000;

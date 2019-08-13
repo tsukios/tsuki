@@ -24,10 +24,10 @@ struct tar_node_priv {
 };
 
 void tar_init(void);
-uint8_t tar_open(struct vfs_device* device, struct vfs_node* node, char* path);
-uint8_t tar_close(struct vfs_device* device, struct vfs_node* node);
-uint8_t tar_read(struct vfs_device* device, struct vfs_node* node, uint8_t* buffer, uint32_t len);
-uint8_t tar_write(struct vfs_device* device, struct vfs_node* node, uint8_t* content, uint32_t len);
+enum error_code tar_open(struct vfs_device* device, struct vfs_node* node, char* path);
+enum error_code tar_close(struct vfs_device* device, struct vfs_node* node);
+enum error_code tar_read(struct vfs_device* device, struct vfs_node* node, uint8_t* buffer, uint32_t len);
+enum error_code tar_write(struct vfs_device* device, struct vfs_node* node, uint8_t* content, uint32_t len);
 uint32_t tar_parse_size(const uint8_t* num);
 struct tar_header* tar_find_file(struct vfs_device* device, char* file, uint32_t* address_buffer);
 

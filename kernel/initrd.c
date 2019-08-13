@@ -18,20 +18,6 @@ void initrd_init(multiboot_info_t* info)
     uint32_t device = vfs_register_device("initrd", &tar_fs, initrd_read, initrd_write);
     vfs_mount("/", device);
 
-    struct vfs_node node;
-    uint8_t ret = tar_open(vfs_get_device(device), &node, "initrd/hello_from_initrd.txt");
-    log(LOG_INFO, "tar_open: RET=%d, PATH=%s, SIZE=%d, ACCESS=%d, POS=%d\n",
-        ret, node.path, node.size, node.access_mode, node.position);
-    uint8_t buffer[5];
-    ret = tar_read(vfs_get_device(device), &node, &buffer, 4);
-    log(LOG_INFO, "tar_read: RET=%d, N=4, BUFFER=%s\n", ret, buffer);
-    buffer[4] = 0;
-    ret = tar_read(vfs_get_device(device), &node, &buffer, 4);
-    log(LOG_INFO, "tar_read: RET=%d, N=4, BUFFER=%s\n", ret, buffer);
-    buffer[4] = 0;
-    ret = tar_read(vfs_get_device(device), &node, &buffer, 4);
-    log(LOG_INFO, "tar_read: RET=%d, N=4, BUFFER=%s\n", ret, buffer);
-
     log(LOG_OK, "Initrd module initialized\n");
 }
 
@@ -49,19 +35,19 @@ void initrd_find(multiboot_info_t* info)
     //process_jump(process);
 }
 
-uint8_t initrd_read(uint8_t* buffer, uint32_t offset, uint32_t len)
+enum error_code initrd_read(uint8_t* buffer, uint32_t offset, uint32_t len)
 {
     if (offset > initrd_size ||
         len > initrd_size ||
         offset + len > initrd_size)
-        return 1;
+        return ERROR;
 
     memcpy((void*) buffer, (const void*) ((uint32_t) initrd + offset), len);
 
-    return 0;
+    return OK;
 }
 
-uint8_t initrd_write(uint8_t* buffer, uint32_t offset, uint32_t len)
+enum error_code initrd_write(uint8_t* buffer, uint32_t offset, uint32_t len)
 {
-    return 1;
+    return VFS_NO_WRITE;
 }

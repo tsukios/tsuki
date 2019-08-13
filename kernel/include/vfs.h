@@ -1,6 +1,8 @@
 #ifndef VFS_H
 #define VFS_H
 
+#include "error.h"
+
 #include <stdint.h>
 #include <stddef.h>
 
@@ -17,8 +19,8 @@ struct vfs_device {
     uint32_t id;
     char* name;
     struct vfs_fs* fs;
-    uint8_t (*read)(uint8_t* buffer, uint32_t offset, uint32_t len);
-    uint8_t (*write)(uint8_t* buffer, uint32_t offset, uint32_t len);
+    enum error_code (*read)(uint8_t* buffer, uint32_t offset, uint32_t len);
+    enum error_code (*write)(uint8_t* buffer, uint32_t offset, uint32_t len);
 };
 
 struct vfs_mount {
@@ -36,10 +38,10 @@ struct vfs_node {
 
 struct vfs_fs {
     char* name;
-    uint8_t (*open)(struct vfs_device* device, struct vfs_node* node, char* path);
-    uint8_t (*close)(struct vfs_device* device, struct vfs_node* node);
-    uint8_t (*read)(struct vfs_device* device, struct vfs_node* node, uint8_t* buffer, uint32_t len);
-    uint8_t (*write)(struct vfs_device* device, struct vfs_node* node, uint8_t* content, uint32_t len);
+    enum error_code (*open)(struct vfs_device* device, struct vfs_node* node, char* path);
+    enum error_code (*close)(struct vfs_device* device, struct vfs_node* node);
+    enum error_code (*read)(struct vfs_device* device, struct vfs_node* node, uint8_t* buffer, uint32_t len);
+    enum error_code (*write)(struct vfs_device* device, struct vfs_node* node, uint8_t* content, uint32_t len);
 };
 
 struct vfs_device vfs_devices[VFS_DEVICE_MAX];
@@ -67,13 +69,13 @@ void vfs_init(void);
 uint32_t vfs_register_device(
     char* name,
     struct vfs_fs* fs,
-    uint8_t (*read)(uint8_t* buffer, uint32_t offset, uint32_t len),
-    uint8_t (*write)(uint8_t* buffer, uint32_t offset, uint32_t len));
+    enum error_code (*read)(uint8_t* buffer, uint32_t offset, uint32_t len),
+    enum error_code (*write)(uint8_t* buffer, uint32_t offset, uint32_t len));
 uint32_t vfs_mount(char* path, uint32_t device);
-uint8_t vfs_open(struct vfs_node* buffer, char* path);
-uint8_t vfs_close(struct vfs_node* node);
-uint8_t vfs_read(struct vfs_node* node, uint8_t* buffer, uint32_t len);
-uint8_t vfs_write(struct vfs_node* node, uint8_t* content, uint32_t len);
-uint8_t vfs_find_mount(char* path, uint8_t* offset);
+enum error_code vfs_open(struct vfs_node* node, char* path);
+enum error_code vfs_close(struct vfs_node* node);
+enum error_code vfs_read(struct vfs_node* node, uint8_t* buffer, uint32_t len);
+enum error_code vfs_write(struct vfs_node* node, uint8_t* content, uint32_t len);
+struct vfs_mount* vfs_find_mount(char* path, size_t* offset);
 
 #endif
