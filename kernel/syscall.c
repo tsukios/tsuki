@@ -20,7 +20,7 @@ void syscall_handle(struct syscall_registers* registers)
 		case 0x01:
 			ADDR_CHECK(registers->ebx);
 
-			log(LOG_NONE, "%s", registers->ebx + ADDR_OFFSET);
+			log(LOG_NONE, "%s", registers->ebx);
 
 			registers->eax = 0;
 			break;
@@ -30,15 +30,15 @@ void syscall_handle(struct syscall_registers* registers)
 			ADDR_CHECK(registers->ecx);
 
 			registers->eax = (uint32_t) vfs_open(
-				(struct vfs_node*) (registers->ebx + ADDR_OFFSET),
-				(char*) (registers->ecx + ADDR_OFFSET));
+				(struct vfs_node*) registers->ebx,
+				(char*) registers->ecx);
 			break;
 		// vfs_close
 		case 0x11:
 			ADDR_CHECK(registers->ebx);
 
 			registers->eax = (uint32_t) vfs_close(
-				(struct vfs_node*) (registers->ebx + ADDR_OFFSET));
+				(struct vfs_node*) registers->ebx);
 			break;
 		// vfs_read
 		case 0x12:
@@ -46,8 +46,8 @@ void syscall_handle(struct syscall_registers* registers)
 			ADDR_CHECK(registers->ecx);
 
 			registers->eax = (uint32_t) vfs_read(
-				(struct vfs_node*) (registers->ebx + ADDR_OFFSET),
-				(uint8_t*) (registers->ecx + ADDR_OFFSET),
+				(struct vfs_node*) registers->ebx,
+				(uint8_t*) registers->ecx,
 				(uint32_t) registers->edx);
 			break;
 		// vfs_write
@@ -56,8 +56,8 @@ void syscall_handle(struct syscall_registers* registers)
 			ADDR_CHECK(registers->ecx);
 
 			registers->eax = (uint32_t) vfs_write(
-				(struct vfs_node*) (registers->ebx + ADDR_OFFSET),
-				(uint8_t*) (registers->ecx + ADDR_OFFSET),
+				(struct vfs_node*) registers->ebx,
+				(uint8_t*) registers->ecx,
 				(uint32_t) registers->edx);
 			break;
 		default:

@@ -21,7 +21,6 @@
 
 void kernel_main(multiboot_info_t* info)
 {
-	// --- Before memory management ---
 	serial_init(0);
 	terminal_init();
 	paging_init();
@@ -34,7 +33,6 @@ void kernel_main(multiboot_info_t* info)
 	// Initrd needs to be loaded here otherwise
 	// the other modules can accidentally overwrite it
 	initrd_init(info);
-	// --- After memory management ---
 	vfs_init();
 	// IDT is last so that the other modules can register
 	// interrupt handlers before the IDT is loaded
@@ -65,7 +63,7 @@ void kernel_main(multiboot_info_t* info)
 
     // Load user mode program
     struct vfs_node node;
-    enum error_code ret = vfs_open(&node, "/initrd/test");
+    enum error_code ret = vfs_open(&node, "/initrd/test_src/test");
     //log(LOG_INFO, "vfs_open: RET=%d, PATH=%s, SIZE=%d, ACCESS=%d, POS=%d\n",
     //    ret, node.path, node.size, node.access_mode, node.position);
 

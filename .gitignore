@@ -5,3 +5,5 @@ obj/*.o
 iso/boot/tsukios.bin
 iso/boot/tsukios.initrd
 initrd/test
+initrd/test_src/test
+initrd/test_src/*.o

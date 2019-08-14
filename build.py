@@ -23,12 +23,17 @@ compiler_flags = "--target=i686-elf -march=i686"
 compile_flags = "-std=c99 -ffreestanding -O2 -Wall -Wextra -nostdlib -fno-builtin"
 link_flags = f"-T {linker_script} -ffreestanding -O2 -nostdlib"
 
+user_compile_flags = "-std=c99 -O2 -Wall -Wextra -nostdlib -nostdinc -fno-builtin \
+	-fno-stack-protector -nodefaultlibs"
+user_link_flags = "-T linker.ld -O2 -nostdlib"
+
 obj_dir = "obj/"
 kernel_dir = "kernel/"
 libc_dir = "libc/"
 asm_dir = f"{kernel_dir}asm/"
 
 initrd_dir = "initrd/"
+init_dir = f"{initrd_dir}test_src/"
 iso_dir = "iso/"
 build_dir = "bin/"
 
@@ -54,7 +59,9 @@ def link():
 	run(f"{compiler} {link_flags} {' '.join(list(obj_files))} -o {bin_file} {compiler_flags}")
 
 def initrd():
-	run(f"{assembler} -fbin {initrd_dir}test.asm -o {initrd_dir}test")
+	run(f"cd {init_dir}; {assembler} {assembler_flags} start.asm -o start.o")
+	run(f"cd {init_dir}; {compiler} {user_compile_flags} -c main.c -o main.o {compiler_flags}")
+	run(f"cd {init_dir}; {compiler} {user_link_flags} *.o -o test {compiler_flags}")
 	run(f"tar -cvf {iso_dir}boot/tsukios.initrd {initrd_dir}*")
 
 def make_iso():
@@ -74,6 +81,7 @@ def clean():
 	run(f"rm {iso_file}", can_fail=True)
 	obj_files = glob.glob(obj_dir + "**/*.o", recursive=True)
 	run(f"rm {' '.join(list(obj_files))}", can_fail=True)
+	run(f"rm {init_dir}*.o", can_fail=True)
 
 def qemu():
 	run(f"qemu-system-i386 -cdrom {iso_file} {qemu_flags}")

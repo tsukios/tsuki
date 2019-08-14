@@ -6,8 +6,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define ADDR_OFFSET 1024*1024*1024
-
 #define ADDR_CHECK(addr) { \
     enum error_code ret = syscall_check_address((size_t) (addr)); \
     if (ret != OK) { \
@@ -30,7 +28,7 @@ struct syscall_registers {
 // TODO: make this function check if the address was mapped
 inline enum error_code syscall_check_address(size_t address)
 {
-    if (address >= (size_t) 3*1024*1024*1024)
+    if (address < (size_t) 1024*1024*1024)
         return SYSCALL_INVALID_ADDRESS;
 
     return OK;
