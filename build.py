@@ -48,7 +48,7 @@ def assemble():
 
 def compile_libc():
 	for file in glob.glob(libc_dir + "**/*.c", recursive=True):
-		run(f"{compiler} {compile_flags} -c {file} -I{libc_dir}include -o {obj_dir}{Path(file).stem + '.o'} {compiler_flags}")
+		run(f"{compiler} {compile_flags} -c {file} -I{libc_dir}include -o {obj_dir}{Path(file).stem + '_libc.o'} {compiler_flags}")
 
 def compile_kernel():
 	for file in glob.glob(kernel_dir + "**/*.c", recursive=True):
@@ -60,8 +60,8 @@ def link():
 
 def initrd():
 	run(f"cd {init_dir}; {assembler} {assembler_flags} start.asm -o start.o")
-	run(f"cd {init_dir}; {compiler} {user_compile_flags} -c main.c -o main.o {compiler_flags}")
-	run(f"cd {init_dir}; {compiler} {user_link_flags} *.o -o test {compiler_flags}")
+	run(f"cd {init_dir}; {compiler} {user_compile_flags} -c main.c -I../../{libc_dir}include -o main.o {compiler_flags}")
+	run(f"cd {init_dir}; {compiler} {user_link_flags} *.o ../../{obj_dir}*_libc.o -o test {compiler_flags}")
 	run(f"tar -cvf {iso_dir}boot/tsukios.initrd {initrd_dir}*")
 
 def make_iso():
